@@ -1,5 +1,23 @@
 # Changelog SIGEREC
 
+## RC1-05 — Landing Page 2.0 institucional
+
+**Objetivo:** elevar la primera impresión del sistema y alinear la portada con el nivel visual del dashboard, centro de reportes y Design System.
+
+**Cambios principales:**
+- Nueva estructura de portada: hero institucional, proceso, indicadores reales, beneficios y CTA final.
+- Indicadores dinámicos calculados desde la base de datos.
+- Ilustración visual propia basada en mapa urbano, marcadores y reportes.
+- Mejora de jerarquía visual, espaciado, llamadas a la acción y responsive.
+- Se reemplaza la ruta de inicio basada en `TemplateView` por una vista `inicio` con contexto dinámico.
+
+**Archivos modificados:**
+- `templates/index.html`
+- `reportes/views.py`
+- `sigerec/urls.py`
+- `static/css/sigerec-ui.css`
+
+
 ## v1.3.2 — Design System inicial
 
 ### Agregado

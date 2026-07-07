@@ -11,6 +11,28 @@ from datetime import timedelta
 import csv
 
 
+
+def inicio(request):
+    """Landing institucional con indicadores reales del sistema."""
+    total_reportes = Reporte.objects.count()
+    reportes_resueltos = Reporte.objects.filter(estado='resuelto').count()
+    reportes_en_gestion = Reporte.objects.exclude(estado='resuelto').count()
+    reportes_con_gps = Reporte.objects.filter(latitud__isnull=False, longitud__isnull=False).count()
+
+    porcentaje_resueltos = round((reportes_resueltos / total_reportes) * 100) if total_reportes else 0
+    porcentaje_gps = round((reportes_con_gps / total_reportes) * 100) if total_reportes else 0
+
+    context = {
+        'total_reportes': total_reportes,
+        'reportes_resueltos': reportes_resueltos,
+        'reportes_en_gestion': reportes_en_gestion,
+        'reportes_con_gps': reportes_con_gps,
+        'porcentaje_resueltos': porcentaje_resueltos,
+        'porcentaje_gps': porcentaje_gps,
+    }
+    return render(request, 'index.html', context)
+
+
 def _historial_items(reporte):
     estados = dict(Reporte.ESTADOS)
     return [

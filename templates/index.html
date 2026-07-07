@@ -1,81 +1,154 @@
 {% extends 'base.html' %}
 {% block titulo %}Inicio{% endblock %}
 {% block contenido %}
-<div class="page-shell">
-    <section class="hero-section mb-4">
-        <div class="hero-content">
-            <div class="hero-kicker"><i class="bi bi-geo-alt"></i> Proyecto piloto para Trinidad, Beni</div>
-            <h1>Reclamos ciudadanos con seguimiento real.</h1>
-            <p class="lead mb-0">SIGEREC permite registrar problemas urbanos, consultar su avance y apoyar la gestión de juntas vecinales con información clara y organizada.</p>
-            <div class="hero-actions">
-                <a href="/reportar/" class="btn btn-accent-custom"><i class="bi bi-plus-circle"></i> Reportar problema</a>
-                <a href="/consultar/" class="btn btn-outline-light rounded-pill fw-bold px-4 py-2"><i class="bi bi-search"></i> Consultar seguimiento</a>
+<div class="landing-v2 page-shell">
+    <section class="landing-hero-v2">
+        <div class="landing-hero-grid">
+            <div class="landing-hero-copy">
+                <span class="landing-kicker"><i class="bi bi-buildings"></i> Plataforma ciudadana para Trinidad, Beni</span>
+                <h1>Sistema Inteligente para la Gestión de Reclamos Ciudadanos</h1>
+                <p class="landing-lead">Reporte problemas urbanos de su barrio de forma rápida, transparente y organizada. SIGEREC permite registrar evidencias, ubicar el problema con GPS y consultar el seguimiento con un código único.</p>
+                <div class="landing-actions">
+                    <a href="{% url 'reportar' %}" class="btn btn-accent-custom btn-lg"><i class="bi bi-plus-circle"></i> Reportar un reclamo</a>
+                    <a href="{% url 'consultar' %}" class="btn btn-light-outline btn-lg"><i class="bi bi-search"></i> Consultar estado</a>
+                </div>
+                <div class="landing-trust-row">
+                    <span><i class="bi bi-geo-alt-fill"></i> GPS</span>
+                    <span><i class="bi bi-camera-fill"></i> Evidencias</span>
+                    <span><i class="bi bi-clock-history"></i> Historial</span>
+                    <span><i class="bi bi-shield-check"></i> Transparencia</span>
+                </div>
             </div>
-            <div class="row g-3 mt-4">
-                <div class="col-md-4"><div class="mini-stat"><strong>01</strong><span>Registro del reclamo</span></div></div>
-                <div class="col-md-4"><div class="mini-stat"><strong>02</strong><span>Validación por junta vecinal</span></div></div>
-                <div class="col-md-4"><div class="mini-stat"><strong>03</strong><span>Seguimiento hasta resolución</span></div></div>
+
+            <div class="landing-visual-card" aria-label="Resumen visual de SIGEREC">
+                <div class="city-map-card">
+                    <div class="map-grid-bg"></div>
+                    <div class="map-node node-a"><i class="bi bi-geo-alt-fill"></i></div>
+                    <div class="map-node node-b"><i class="bi bi-lightbulb-fill"></i></div>
+                    <div class="map-node node-c"><i class="bi bi-trash-fill"></i></div>
+                    <div class="map-route route-1"></div>
+                    <div class="map-route route-2"></div>
+                    <div class="floating-report report-a">
+                        <span class="status-dot warning"></span>
+                        <div><strong>REC-0001</strong><small>Validado por junta</small></div>
+                    </div>
+                    <div class="floating-report report-b">
+                        <span class="status-dot success"></span>
+                        <div><strong>REC-0002</strong><small>Resuelto</small></div>
+                    </div>
+                    <div class="ops-chip"><i class="bi bi-speedometer2"></i> Panel operativo</div>
+                </div>
             </div>
         </div>
     </section>
 
-    <div class="row g-4 mb-4">
-        <div class="col-lg-4">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-megaphone"></i></div>
-                <h5 class="fw-bold">Reportes ordenados</h5>
-                <p class="text-muted mb-0">El vecino registra baches, basura, alumbrado dañado u otros problemas con descripción, ubicación y foto opcional.</p>
+    <section class="landing-section">
+        <div class="section-heading text-center">
+            <span class="section-kicker">Proceso simple</span>
+            <h2>Del reporte ciudadano a la atención vecinal</h2>
+            <p>El flujo está diseñado para que cualquier vecino pueda registrar un reclamo y conocer su avance sin llamadas, papeles ni mensajes perdidos.</p>
+        </div>
+        <div class="process-line">
+            <div class="process-step">
+                <div class="step-number">1</div>
+                <h5>Reporte</h5>
+                <p>El vecino describe el problema, adjunta evidencia y registra ubicación.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">2</div>
+                <h5>Validación</h5>
+                <p>La junta vecinal revisa el reclamo y confirma su atención.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">3</div>
+                <h5>Seguimiento</h5>
+                <p>El estado cambia según avance: derivado, en proceso o resuelto.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">4</div>
+                <h5>Solución</h5>
+                <p>El historial queda registrado para consulta y rendición de cuentas.</p>
             </div>
         </div>
-        <div class="col-lg-4">
-            <div class="feature-card">
-                <div class="feature-icon blue"><i class="bi bi-upc-scan"></i></div>
-                <h5 class="fw-bold">Número de seguimiento</h5>
-                <p class="text-muted mb-0">Cada reclamo genera un código único para consultar el estado sin depender de llamadas, papel o mensajes perdidos.</p>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-bar-chart-line"></i></div>
-                <h5 class="fw-bold">Dashboard vecinal</h5>
-                <p class="text-muted mb-0">Los presidentes de junta pueden revisar reportes de su barrio, cambiar estados y ver estadísticas básicas.</p>
-            </div>
-        </div>
-    </div>
+    </section>
 
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="card-modern h-100">
-                <div class="card-body d-flex flex-column">
-                    <span class="feature-icon"><i class="bi bi-plus-circle"></i></span>
-                    <h4 class="fw-bold">Reportar un problema</h4>
-                    <p class="text-muted flex-grow-1">Registra un nuevo reclamo urbano para que pueda ser atendido y monitoreado.</p>
-                    <a href="/reportar/" class="btn btn-accent-custom align-self-start"><i class="bi bi-send"></i> Crear reporte</a>
+    <section class="landing-section stats-panel-v2">
+        <div class="row g-3 align-items-stretch">
+            <div class="col-lg-3 col-md-6">
+                <div class="metric-card-v2">
+                    <span class="metric-label">Reportes registrados</span>
+                    <strong data-count>{{ total_reportes }}</strong>
+                    <small>Total de reclamos ingresados al sistema</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="metric-card-v2">
+                    <span class="metric-label">Resueltos</span>
+                    <strong data-count>{{ porcentaje_resueltos }}</strong>
+                    <small>{{ reportes_resueltos }} caso(s) cerrados correctamente</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="metric-card-v2">
+                    <span class="metric-label">En gestión</span>
+                    <strong data-count>{{ reportes_en_gestion }}</strong>
+                    <small>Casos pendientes de atención o seguimiento</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="metric-card-v2">
+                    <span class="metric-label">Con GPS</span>
+                    <strong data-count>{{ porcentaje_gps }}</strong>
+                    <small>{{ reportes_con_gps }} reporte(s) con ubicación precisa</small>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card-modern h-100">
-                <div class="card-body d-flex flex-column">
-                    <span class="feature-icon blue"><i class="bi bi-search"></i></span>
-                    <h4 class="fw-bold">Consultar reclamo</h4>
-                    <p class="text-muted flex-grow-1">Ingresa tu número de seguimiento y revisa el estado actual de tu solicitud.</p>
-                    <a href="/consultar/" class="btn btn-success-custom align-self-start"><i class="bi bi-search"></i> Consultar estado</a>
+    </section>
+
+    <section class="landing-section">
+        <div class="section-heading text-center">
+            <span class="section-kicker">Confianza y trazabilidad</span>
+            <h2>Herramientas pensadas para una gestión vecinal clara</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="benefit-card-v2">
+                    <div class="benefit-icon"><i class="bi bi-geo-alt"></i></div>
+                    <h5>Ubicación GPS</h5>
+                    <p>Permite identificar con mayor precisión dónde se encuentra el problema urbano.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="benefit-card-v2">
+                    <div class="benefit-icon blue"><i class="bi bi-camera"></i></div>
+                    <h5>Evidencias</h5>
+                    <p>Las fotografías ayudan a documentar el reclamo y priorizar su atención.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="benefit-card-v2">
+                    <div class="benefit-icon amber"><i class="bi bi-graph-up-arrow"></i></div>
+                    <h5>Seguimiento</h5>
+                    <p>Cada reclamo tiene un número único para consultar su estado actualizado.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="benefit-card-v2">
+                    <div class="benefit-icon green"><i class="bi bi-journal-check"></i></div>
+                    <h5>Historial</h5>
+                    <p>Los cambios de estado quedan registrados para mejorar la transparencia.</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    {% if user.is_authenticated %}
-    <div class="card-modern mt-4">
-        <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <div>
-                <h5 class="fw-bold mb-1">Bienvenido, {{ user.first_name|default:user.username }}</h5>
-                <p class="text-muted mb-0">Puedes revisar tus reportes y su estado desde el dashboard.</p>
-            </div>
-            <a href="/dashboard/" class="btn btn-primary-custom"><i class="bi bi-speedometer2"></i> Ver dashboard</a>
+    <section class="landing-final-cta">
+        <div>
+            <span class="section-kicker light">Acción ciudadana</span>
+            <h2>¿Encontró un problema en su barrio?</h2>
+            <p>Registre el reclamo en pocos minutos y obtenga un código de seguimiento.</p>
         </div>
-    </div>
-    {% endif %}
+        <a href="{% url 'reportar' %}" class="btn btn-accent-custom btn-lg"><i class="bi bi-send"></i> Reportar ahora</a>
+    </section>
 </div>
 {% endblock %}

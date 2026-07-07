@@ -1,14 +1,13 @@
 from django.contrib import admin
 from django.urls import path
-from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
 from vecinos.views import registro, login_view, logout_view
-from reportes.views import reportar, consultar, dashboard, cambiar_estado, detalle_reporte, exportar_reportes_csv, centro_reportes, exportar_reportes_excel
+from reportes.views import inicio, reportar, consultar, dashboard, cambiar_estado, detalle_reporte, exportar_reportes_csv, centro_reportes, exportar_reportes_excel
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='index.html'), name='inicio'),
+    path('', inicio, name='inicio'),
     path('registro/', registro, name='registro'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
