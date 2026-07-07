@@ -171,6 +171,21 @@
         .estado-dot{display:inline-block;width:.55rem;height:.55rem;border-radius:50%;margin-right:.35rem;vertical-align:middle;background:var(--muted)}.badge-reportado .estado-dot{background:#516173}.badge-validado .estado-dot{background:#235A93}.badge-derivado .estado-dot{background:#95650C}.badge-proceso .estado-dot{background:#176B48}.badge-resuelto .estado-dot{background:#176B48}
         @media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
+        /* RC1-04 — Polish UX */
+        .btn,.nav-link,.card-modern,.sigerec-section-card,.stat-card,.feature-card{will-change:transform;}
+        .btn{position:relative;transition:transform .18s ease, filter .18s ease, box-shadow .18s ease, opacity .18s ease;}
+        .btn:active{transform:translateY(0) scale(.98)!important;}
+        .btn.is-loading{pointer-events:none;opacity:.82;padding-right:2.35rem!important;}
+        .btn.is-loading::after{content:"";position:absolute;right:.95rem;top:50%;width:1rem;height:1rem;margin-top:-.5rem;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .65s linear infinite;}
+        .sigerec-page-loader{transition:opacity .18s ease;}
+        .sigerec-page-loader .loader-card{min-width:280px;justify-content:center;}
+        .table-modern tbody tr,.sigerec-section-card,.card-modern,.stat-card{animation:sigerecFadeUp .34s ease both;}
+        .table-modern tbody tr:nth-child(1){animation-delay:.02s}.table-modern tbody tr:nth-child(2){animation-delay:.04s}.table-modern tbody tr:nth-child(3){animation-delay:.06s}.table-modern tbody tr:nth-child(4){animation-delay:.08s}.table-modern tbody tr:nth-child(5){animation-delay:.10s}
+        @keyframes sigerecFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        .form-control:hover,.form-select:hover,textarea:hover,select:hover,input:hover{border-color:rgba(31,107,80,.42)!important;}
+        .sigerec-export-hint{font-size:.78rem;color:var(--muted);font-weight:700;margin-top:.65rem;display:flex;align-items:center;gap:.4rem;}
+
+
 
         /* SIGEREC UI v1.3.2 - Design System base */
         .sigerec-container{width:min(1480px,100%);margin-inline:auto;}
@@ -205,7 +220,7 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <div class="sigerec-page-loader" id="sigerecPageLoader"><div class="loader-card"><span class="loader-spinner"></span> Procesando acción...</div></div>
+    <div class="sigerec-page-loader" id="sigerecPageLoader"><div class="loader-card"><span class="loader-spinner"></span> <span id="sigerecLoaderText">Procesando acción...</span></div></div>
     {% include 'components/navbar.html' %}
 
     <main class="container flex-grow-1">
@@ -313,13 +328,44 @@
             });
 
             const loader = document.getElementById("sigerecPageLoader");
+            const loaderText = document.getElementById("sigerecLoaderText");
+            const showLoader = function(message){
+                if (loaderText) loaderText.textContent = message || "Procesando acción...";
+                if (loader) loader.classList.add("active");
+            };
+            const hideLoader = function(){
+                if (loader) loader.classList.remove("active");
+            };
+
             document.querySelectorAll("form").forEach(function(form){
                 form.addEventListener("submit", function(){
-                    if (loader) loader.classList.add("active");
+                    showLoader(form.dataset.loaderMessage || "Procesando información...");
+                    form.querySelectorAll("button[type='submit'], input[type='submit']").forEach(function(btn){
+                        btn.classList.add("is-loading");
+                        btn.disabled = true;
+                    });
                 });
             });
+
+            document.querySelectorAll("a[data-sigerec-loading]").forEach(function(link){
+                link.addEventListener("click", function(){
+                    showLoader(link.dataset.loaderMessage || "Preparando archivo...");
+                    link.classList.add("is-loading");
+                    if (link.dataset.sigerecDownload === "true") {
+                        setTimeout(function(){
+                            hideLoader();
+                            link.classList.remove("is-loading");
+                        }, 3800);
+                    }
+                });
+            });
+
             window.addEventListener("pageshow", function(){
-                if (loader) loader.classList.remove("active");
+                hideLoader();
+                document.querySelectorAll(".is-loading").forEach(function(el){
+                    el.classList.remove("is-loading");
+                    if (el.disabled) el.disabled = false;
+                });
             });
         });
     </script>

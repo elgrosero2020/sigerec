@@ -32,3 +32,23 @@ Esta versión no toca modelos, base de datos, migraciones ni lógica crítica. E
 - `templates/dashboard_vecino.html`
 - `templates/centro_reportes.html`
 - `docs/CHANGELOG_SIGEREC.md`
+
+
+## RC1-04 — Polish UX inicial
+
+**Objetivo:** mejorar la sensación de producto terminado mediante microinteracciones y retroalimentación visual.
+
+**Cambios:**
+- Loader institucional con mensajes dinámicos según la acción ejecutada.
+- Botones de formularios se bloquean visualmente durante el envío para evitar doble clic.
+- Exportaciones CSV/Excel muestran estado de generación mientras se prepara la descarga.
+- Se agregaron microanimaciones suaves en tarjetas y filas de tablas.
+- Se reforzaron estados `hover`, `focus` y `active` de botones y campos.
+
+**Archivos modificados:**
+- `templates/base.html`
+- `templates/centro_reportes.html`
+- `templates/dashboard_presidente.html`
+- `docs/CHANGELOG_SIGEREC.md`
+
+**Riesgo:** bajo. No modifica modelos, migraciones ni base de datos.

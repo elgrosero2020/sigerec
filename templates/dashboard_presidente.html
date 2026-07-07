@@ -253,7 +253,7 @@
             </div>
             <div class="col-12 d-flex flex-wrap gap-2">
                 <button type="submit" class="btn btn-primary-custom"><i class="bi bi-search"></i> Aplicar filtros</button>
-                <a href="{% url 'exportar_reportes_csv' %}?q={{ filtros.q|urlencode }}&tipo={{ filtros.tipo|urlencode }}&estado={{ filtros.estado|urlencode }}&gps={{ filtros.gps|urlencode }}" class="btn btn-outline-custom"><i class="bi bi-download"></i> Exportar CSV</a>
+                <a href="{% url 'exportar_reportes_csv' %}?q={{ filtros.q|urlencode }}&tipo={{ filtros.tipo|urlencode }}&estado={{ filtros.estado|urlencode }}&gps={{ filtros.gps|urlencode }}" class="btn btn-outline-custom" data-sigerec-loading data-sigerec-download="true" data-loader-message="Exportando reportes filtrados..."><i class="bi bi-download"></i> Exportar CSV</a>
                 {% if filtros_activos %}<a href="{% url 'dashboard' %}" class="btn btn-outline-custom"><i class="bi bi-x-circle"></i> Limpiar filtros</a>{% endif %}
             </div>
         </form>
