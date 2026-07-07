@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Dashboard del Presidente{% endblock %}
+
+{% block contenido %}
+<style>
+    .dashboard-hero{
+        position:relative;
+        overflow:hidden;
+        border-radius:26px;
+        padding:2rem;
+        color:#fff;
+        background:linear-gradient(135deg,var(--primary),var(--primary-2) 52%,var(--accent));
+        box-shadow:var(--shadow);
+        margin-bottom:1.5rem;
+    }
+    .dashboard-hero:before{content:"";position:absolute;right:-4rem;top:-5rem;width:16rem;height:16rem;border-radius:50%;background:rgba(255,255,255,.13);}
+    .dashboard-hero:after{content:"";position:absolute;left:-4rem;bottom:-6rem;width:14rem;height:14rem;border-radius:50%;background:rgba(86,204,242,.14);}
+    .dashboard-hero-content{position:relative;z-index:1;}
+    .dashboard-kicker{display:inline-flex;align-items:center;gap:.45rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:.42rem .75rem;font-weight:800;font-size:.82rem;margin-bottom:.8rem;}
+    .dashboard-title{font-weight:900;letter-spacing:-.055em;margin:0;font-size:clamp(2rem,4vw,3.2rem);}
+    .dashboard-subtitle{opacity:.88;max-width:760px;margin:.7rem 0 0;}
+    .premium-card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-sm);padding:1.25rem;height:100%;position:relative;overflow:hidden;}
+    .premium-card:after{content:"";position:absolute;right:-2rem;bottom:-2rem;width:6rem;height:6rem;border-radius:50%;background:rgba(31,107,80,.06);}
+    .premium-icon{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:rgba(31,107,80,.10);color:var(--primary-2);font-size:1.35rem;margin-bottom:.85rem;}
+    .premium-icon.blue{background:rgba(47,128,237,.10);color:var(--accent);}.premium-icon.warn{background:#FFF6DF;color:#95650C;}.premium-icon.success{background:#E8F7EE;color:#176B48;}
+    .premium-number{font-size:2rem;font-weight:900;line-height:1;color:var(--primary);letter-spacing:-.04em;}
+    .premium-label{font-size:.85rem;color:var(--muted);font-weight:800;margin-top:.35rem;}
+    .metric-note{font-size:.78rem;color:var(--muted);font-weight:700;margin-top:.55rem;}
+    .progress-soft{height:.55rem;border-radius:999px;background:#E8EEF4;overflow:hidden;margin-top:.75rem;}
+    .progress-soft > span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--primary-2),var(--accent));}
+    .progress-soft.warning > span{background:linear-gradient(90deg,#B7791F,#F6C453);}.progress-soft.success > span{background:linear-gradient(90deg,#1F7A4D,#2FA56F);}
+    .quick-insight{display:flex;align-items:flex-start;gap:.8rem;padding:.9rem;border:1px solid var(--line);border-radius:16px;background:#fff;margin-bottom:.75rem;}
+    .quick-insight i{font-size:1.15rem;color:var(--primary-2);}
+    .quick-insight strong{display:block;color:var(--ink);line-height:1.15;}.quick-insight span{font-size:.82rem;color:var(--muted);font-weight:650;}
+    .mini-timeline{position:relative;padding-left:1rem;}
+    .mini-timeline:before{content:"";position:absolute;left:.25rem;top:.25rem;bottom:.25rem;width:2px;background:linear-gradient(var(--primary-2),rgba(47,128,237,.25));border-radius:99px;}
+    .mini-timeline-item{position:relative;padding-left:1rem;padding-bottom:.9rem;}
+    .mini-timeline-item:last-child{padding-bottom:0;}
+    .mini-timeline-dot{position:absolute;left:-.08rem;top:.28rem;width:.65rem;height:.65rem;border-radius:50%;background:var(--primary-2);border:2px solid #fff;box-shadow:0 0 0 3px rgba(31,107,80,.14);}
+    .compact-map-cell{min-width:260px;}
+
+    .operations-card{background:linear-gradient(180deg,#fff,rgba(248,251,250,.96));border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow-sm);overflow:hidden;height:100%;}
+    .operations-title{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.15rem 1.25rem;border-bottom:1px solid var(--line);}
+    .operations-title h5{margin:0;font-weight:900;color:var(--primary);letter-spacing:-.025em;}
+    .ops-badge{border-radius:999px;padding:.38rem .7rem;font-size:.76rem;font-weight:850;background:rgba(31,107,80,.10);color:var(--primary);}
+    .alerta-operativa{display:flex;gap:.9rem;padding:1rem;border:1px solid var(--line);border-radius:18px;background:#fff;margin-bottom:.8rem;}
+    .alerta-operativa:last-child{margin-bottom:0;}
+    .alerta-icon{width:42px;height:42px;min-width:42px;border-radius:14px;display:grid;place-items:center;font-size:1.2rem;}
+    .alerta-warning .alerta-icon{background:#FFF6DF;color:#95650C;}.alerta-danger .alerta-icon{background:#FDECEC;color:#B42318;}.alerta-info .alerta-icon{background:rgba(47,128,237,.10);color:var(--accent);}.alerta-success .alerta-icon{background:#E8F7EE;color:#176B48;}
+    .alerta-operativa strong{display:block;color:var(--ink);line-height:1.2;margin-bottom:.15rem;}.alerta-operativa span{display:block;color:var(--muted);font-size:.84rem;font-weight:650;}
+    .priority-item{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding:1rem;border:1px solid var(--line);border-radius:18px;background:#fff;margin-bottom:.75rem;}
+    .priority-item:last-child{margin-bottom:0;}.priority-code{font-weight:950;color:var(--primary);}.priority-meta{font-size:.82rem;color:var(--muted);font-weight:700;margin-top:.15rem;}.priority-actions{display:flex;gap:.35rem;flex-wrap:wrap;justify-content:flex-end;}
+    .priority-rank{width:30px;height:30px;border-radius:10px;background:rgba(31,107,80,.10);color:var(--primary);display:grid;place-items:center;font-weight:950;min-width:30px;}
+    @media(max-width:768px){.dashboard-hero{padding:1.45rem;border-radius:22px}.compact-map-cell{min-width:220px}}
+</style>
+
+<div class="dashboard-hero">
+    <div class="dashboard-hero-content d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <div class="dashboard-kicker"><i class="bi bi-shield-check"></i> Panel de gestión vecinal</div>
+            <h2 class="dashboard-title">Dashboard del Presidente</h2>
+            <p class="dashboard-subtitle">Bienvenido, <strong>{{ vecino.nombre }}</strong>. Estás gestionando los reclamos del barrio <strong>{{ vecino.barrio }}</strong> con seguimiento, filtros, GPS y control de estados.</p>
+        </div>
+        <div class="text-lg-end">
+            <span class="badge" style="background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:.65rem 1rem;border:1px solid rgba(255,255,255,.18);">
+                <i class="bi bi-person-badge"></i> Rol: Presidente
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="premium-card">
+            <div class="premium-icon"><i class="bi bi-file-earmark-text"></i></div>
+            <div class="premium-number">{{ total_reportes }}</div>
+            <div class="premium-label">Total de reportes</div>
+            <div class="metric-note">{{ reportes_recientes_24h }} creado{% if reportes_recientes_24h != 1 %}s{% endif %} hoy</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="premium-card">
+            <div class="premium-icon warn"><i class="bi bi-hourglass-split"></i></div>
+            <div class="premium-number">{{ reportes_pendientes }}</div>
+            <div class="premium-label">Pendientes de cierre</div>
+            <div class="progress-soft warning"><span style="width: {{ porcentaje_pendientes }}%;"></span></div>
+            <div class="metric-note">{{ porcentaje_pendientes }}% del total</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="premium-card">
+            <div class="premium-icon success"><i class="bi bi-check2-circle"></i></div>
+            <div class="premium-number">{{ reportes_resueltos }}</div>
+            <div class="premium-label">Casos resueltos</div>
+            <div class="progress-soft success"><span style="width: {{ porcentaje_resueltos }}%;"></span></div>
+            <div class="metric-note">{{ porcentaje_resueltos }}% de avance</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="premium-card">
+            <div class="premium-icon blue"><i class="bi bi-geo-alt"></i></div>
+            <div class="premium-number">{{ reportes_con_gps }}</div>
+            <div class="premium-label">Reportes con GPS</div>
+            <div class="progress-soft"><span style="width: {{ porcentaje_gps }}%;"></span></div>
+            <div class="metric-note">{{ porcentaje_gps }}% georreferenciado</div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-5">
+        <div class="operations-card">
+            <div class="operations-title">
+                <h5><i class="bi bi-command"></i> Centro de operaciones</h5>
+                <span class="ops-badge">Alertas</span>
+            </div>
+            <div class="p-3">
+                {% for alerta in alertas_operativas %}
+                    <div class="alerta-operativa alerta-{{ alerta.tipo }}">
+                        <div class="alerta-icon"><i class="bi {{ alerta.icono }}"></i></div>
+                        <div>
+                            <strong>{{ alerta.titulo }}</strong>
+                            <span>{{ alerta.detalle }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="operations-card">
+            <div class="operations-title">
+                <h5><i class="bi bi-list-check"></i> Prioridades de atención</h5>
+                <span class="ops-badge">Top 5</span>
+            </div>
+            <div class="p-3">
+                {% if reportes_prioritarios %}
+                    {% for reporte in reportes_prioritarios %}
+                        <div class="priority-item">
+                            <div class="d-flex gap-3">
+                                <div class="priority-rank">{{ forloop.counter }}</div>
+                                <div>
+                                    <div class="priority-code">{{ reporte.numero_seguimiento }}</div>
+                                    <div class="priority-meta">{{ reporte.get_tipo_display }} · {{ reporte.ubicacion|truncatechars:55 }}</div>
+                                    <div class="priority-meta">Actualizado: {{ reporte.fecha_actualizacion|date:"d/m/Y H:i" }}</div>
+                                </div>
+                            </div>
+                            <div class="priority-actions">
+                                <span class="badge badge-estado {% if reporte.estado == 'reportado' %}badge-reportado{% elif reporte.estado == 'validado' %}badge-validado{% elif reporte.estado == 'derivado' %}badge-derivado{% elif reporte.estado == 'proceso' %}badge-proceso{% elif reporte.estado == 'resuelto' %}badge-resuelto{% endif %}">{{ reporte.get_estado_display }}</span>
+                                <a href="{% url 'detalle_reporte' reporte.numero_seguimiento %}" class="btn btn-sm btn-outline-success" style="border-radius:999px;padding:5px 12px;"><i class="bi bi-eye"></i> Ver</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    {% include "components/empty_state.html" with icon="bi-check2-circle" title="Sin prioridades pendientes" message="No existen reclamos urgentes o pendientes que requieran atención inmediata. El barrio se encuentra al día según los filtros actuales." %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="card-modern h-100">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span><i class="bi bi-bar-chart-line"></i> Resumen operativo del barrio</span>
+                <span class="badge" style="background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:.5rem .85rem;">Vista ejecutiva</span>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3" style="color:var(--primary);"><i class="bi bi-tags"></i> Por tipo</h6>
+                        <div class="quick-insight"><i class="bi bi-exclamation-triangle"></i><div><strong>Baches: {{ reportes_por_tipo.bache }}</strong><span>Problemas en vías o calles.</span></div></div>
+                        <div class="quick-insight"><i class="bi bi-trash"></i><div><strong>Basura acumulada: {{ reportes_por_tipo.basura }}</strong><span>Acumulación o recojo pendiente.</span></div></div>
+                        <div class="quick-insight"><i class="bi bi-lightbulb"></i><div><strong>Alumbrado dañado: {{ reportes_por_tipo.alumbrado }}</strong><span>Fallas de iluminación pública.</span></div></div>
+                        <div class="quick-insight mb-0"><i class="bi bi-three-dots"></i><div><strong>Otros: {{ reportes_por_tipo.otro }}</strong><span>Casos fuera de categorías principales.</span></div></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3" style="color:var(--primary);"><i class="bi bi-arrow-repeat"></i> Por estado</h6>
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2"><span class="badge badge-estado badge-reportado">Reportado</span><strong>{{ reportes_por_estado.reportado }}</strong></div>
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2"><span class="badge badge-estado badge-validado">Validado</span><strong>{{ reportes_por_estado.validado }}</strong></div>
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2"><span class="badge badge-estado badge-derivado">Derivado</span><strong>{{ reportes_por_estado.derivado }}</strong></div>
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2"><span class="badge badge-estado badge-proceso">En proceso</span><strong>{{ reportes_por_estado.proceso }}</strong></div>
+                        <div class="d-flex justify-content-between align-items-center py-2"><span class="badge badge-estado badge-resuelto">Resuelto</span><strong>{{ reportes_por_estado.resuelto }}</strong></div>
+                        <div class="alert alert-info mt-3 mb-0 small">
+                            <i class="bi bi-info-circle"></i> Hay {{ reportes_sin_gps }} reporte{% if reportes_sin_gps != 1 %}s{% endif %} sin coordenadas GPS.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card-modern h-100">
+            <div class="card-header"><i class="bi bi-clock-history"></i> Últimos movimientos</div>
+            <div class="card-body">
+                {% if movimientos_recientes %}
+                    <div class="mini-timeline">
+                        {% for movimiento in movimientos_recientes %}
+                            <div class="mini-timeline-item">
+                                <span class="mini-timeline-dot"></span>
+                                <div class="fw-bold">{{ movimiento.reporte.numero_seguimiento }}</div>
+                                <div class="small text-muted">{{ movimiento.fecha_cambio|date:"d/m/Y H:i" }}</div>
+                                <div class="small">Cambio de estado registrado.</div>
+                                {% if movimiento.comentario %}<div class="small text-muted">“{{ movimiento.comentario|truncatechars:80 }}”</div>{% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {% include "components/empty_state.html" with icon="bi-clock-history" title="Sin movimientos registrados" message="Cuando un presidente cambie el estado de un reclamo, el historial operativo aparecerá en esta sección." %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card-modern mb-4">
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <span><i class="bi bi-funnel"></i> Filtros de gestión</span>
+        <span class="badge" style="background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:8px 14px;">
+            {{ cantidad_filtrada }} resultado{% if cantidad_filtrada != 1 %}s{% endif %}
+        </span>
+    </div>
+    <div class="card-body">
+        <form method="get" action="{% url 'dashboard' %}" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="q" class="form-label fw-semibold">Buscar</label>
+                <input type="text" name="q" id="q" value="{{ filtros.q }}" class="form-control-modern w-100" placeholder="REC-0001, calle, vecino...">
+            </div>
+            <div class="col-md-3">
+                <label for="tipo" class="form-label fw-semibold">Tipo de problema</label>
+                <select name="tipo" id="tipo" class="form-control-modern w-100">
+                    <option value="">Todos los tipos</option>
+                    {% for valor, texto in tipos_reporte %}<option value="{{ valor }}" {% if filtros.tipo == valor %}selected{% endif %}>{{ texto }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="estado" class="form-label fw-semibold">Estado</label>
+                <select name="estado" id="estado" class="form-control-modern w-100">
+                    <option value="">Todos los estados</option>
+                    {% for valor, texto in estados_reporte %}<option value="{{ valor }}" {% if filtros.estado == valor %}selected{% endif %}>{{ texto }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="gps" class="form-label fw-semibold">Ubicación GPS</label>
+                <select name="gps" id="gps" class="form-control-modern w-100">
+                    <option value="">Todos</option>
+                    <option value="con_gps" {% if filtros.gps == 'con_gps' %}selected{% endif %}>Solo con GPS</option>
+                    <option value="sin_gps" {% if filtros.gps == 'sin_gps' %}selected{% endif %}>Solo sin GPS</option>
+                </select>
+            </div>
+            <div class="col-12 d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary-custom"><i class="bi bi-search"></i> Aplicar filtros</button>
+                <a href="{% url 'exportar_reportes_csv' %}?q={{ filtros.q|urlencode }}&tipo={{ filtros.tipo|urlencode }}&estado={{ filtros.estado|urlencode }}&gps={{ filtros.gps|urlencode }}" class="btn btn-outline-custom"><i class="bi bi-download"></i> Exportar CSV</a>
+                {% if filtros_activos %}<a href="{% url 'dashboard' %}" class="btn btn-outline-custom"><i class="bi bi-x-circle"></i> Limpiar filtros</a>{% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card-modern">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span><i class="bi bi-file-earmark-text"></i> Reportes del barrio</span>
+                {% if filtros_activos %}<span class="badge" style="background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:8px 14px;">Vista filtrada</span>{% else %}<span class="badge" style="background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:8px 14px;">Últimos 50</span>{% endif %}
+            </div>
+            <div class="card-body p-0">
+                {% if ultimos_reportes %}
+                    <div class="table-responsive">
+                        <table class="table table-modern mb-0">
+                            <thead>
+                                <tr>
+                                    <th>N° seguimiento</th><th>Vecino</th><th>Tipo</th><th>Ubicación</th><th>Estado</th><th>Fecha</th><th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reporte in ultimos_reportes %}
+                                    <tr>
+                                        <td><strong>{{ reporte.numero_seguimiento }}</strong></td>
+                                        <td><strong>{{ reporte.vecino.nombre }}</strong><div class="text-muted small">{{ reporte.vecino.telefono }}</div></td>
+                                        <td>{{ reporte.get_tipo_display }}</td>
+                                        <td class="compact-map-cell">
+                                            <div class="location-reference">{{ reporte.ubicacion }}</div>
+                                            {% if reporte.tiene_gps %}
+                                                <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                                                    <span class="gps-pill"><i class="bi bi-crosshair"></i> GPS</span>
+                                                    <a href="{{ reporte.google_maps_url }}" target="_blank" class="gps-link-button"><i class="bi bi-map"></i> Mapa</a>
+                                                </div>
+                                                <div class="gps-coordinates mt-1">{{ reporte.latitud }}, {{ reporte.longitud }}</div>
+                                                <div class="sigerec-map map-mini" data-lat="{{ reporte.latitud|stringformat:'f' }}" data-lng="{{ reporte.longitud|stringformat:'f' }}" data-label="{{ reporte.numero_seguimiento }}"></div>
+                                            {% else %}
+                                                <span class="text-muted small"><i class="bi bi-dash-circle"></i> Sin GPS</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-estado {% if reporte.estado == 'reportado' %}badge-reportado{% elif reporte.estado == 'validado' %}badge-validado{% elif reporte.estado == 'derivado' %}badge-derivado{% elif reporte.estado == 'proceso' %}badge-proceso{% elif reporte.estado == 'resuelto' %}badge-resuelto{% endif %}">{{ reporte.get_estado_display }}</span>
+                                        </td>
+                                        <td>{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <a href="{% url 'detalle_reporte' reporte.numero_seguimiento %}" class="btn btn-sm btn-outline-success" style="border-radius:999px;padding:6px 14px;"><i class="bi bi-eye"></i> Detalle</a>
+                                                <button type="button" class="btn btn-sm" style="background:var(--primary);color:#fff;border:0;border-radius:999px;padding:6px 14px;" data-bs-toggle="modal" data-bs-target="#modalEstado{{ reporte.id }}"><i class="bi bi-pencil"></i> Cambiar</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="p-4">
+                        {% if filtros_activos %}
+                            {% include "components/empty_state.html" with icon="bi-search" title="No hay resultados para estos filtros" message="No se encontraron reportes que coincidan con la búsqueda actual. Limpia los filtros o prueba con otros criterios." action_url="/dashboard/" action_text="Limpiar filtros" action_icon="bi-arrow-counterclockwise" %}
+                        {% else %}
+                            {% include "components/empty_state.html" with icon="bi-inbox" title="Sin reportes registrados" message="Cuando un vecino registre un reclamo en este barrio, aparecerá aquí para su validación y seguimiento." %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if ultimos_reportes %}
+    {% for reporte in ultimos_reportes %}
+        <div class="modal fade" id="modalEstado{{ reporte.id }}" tabindex="-1" aria-labelledby="modalEstadoLabel{{ reporte.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="border-radius:16px;overflow:hidden;">
+                    <div class="modal-header" style="background:var(--primary);color:white;">
+                        <h5 class="modal-title" id="modalEstadoLabel{{ reporte.id }}"><i class="bi bi-pencil"></i> Cambiar Estado - {{ reporte.numero_seguimiento }}</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <form method="post" action="{% url 'cambiar_estado' reporte.id %}">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <p><strong>Reporte:</strong> {{ reporte.numero_seguimiento }}</p>
+                            <p><strong>Estado actual:</strong> <span class="badge badge-estado {% if reporte.estado == 'reportado' %}badge-reportado{% elif reporte.estado == 'validado' %}badge-validado{% elif reporte.estado == 'derivado' %}badge-derivado{% elif reporte.estado == 'proceso' %}badge-proceso{% elif reporte.estado == 'resuelto' %}badge-resuelto{% endif %}">{{ reporte.get_estado_display }}</span></p>
+                            <div class="mb-3">
+                                <label for="estado{{ reporte.id }}" class="form-label">Nuevo estado</label>
+                                <select name="estado" id="estado{{ reporte.id }}" class="form-control-modern w-100" required>
+                                    <option value="">-- Selecciona --</option>
+                                    {% for valor, texto in estados_reporte %}<option value="{{ valor }}" {% if reporte.estado == valor %}selected{% endif %}>{{ texto }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comentario{{ reporte.id }}" class="form-label">Comentario (opcional)</label>
+                                <textarea name="comentario" id="comentario{{ reporte.id }}" class="form-control-modern w-100" rows="3" placeholder="Agrega un comentario..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn" data-bs-dismiss="modal" style="padding:10px 24px;border-radius:999px;background:#6c757d;color:white;border:0;">Cancelar</button>
+                            <button type="submit" class="btn" style="padding:10px 24px;border-radius:999px;background:var(--primary);color:white;border:0;">Actualizar Estado</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+<div class="page-shell">
+    <section class="hero-section mb-4">
+        <div class="hero-content">
+            <div class="hero-kicker"><i class="bi bi-geo-alt"></i> Proyecto piloto para Trinidad, Beni</div>
+            <h1>Reclamos ciudadanos con seguimiento real.</h1>
+            <p class="lead mb-0">SIGEREC permite registrar problemas urbanos, consultar su avance y apoyar la gestión de juntas vecinales con información clara y organizada.</p>
+            <div class="hero-actions">
+                <a href="/reportar/" class="btn btn-accent-custom"><i class="bi bi-plus-circle"></i> Reportar problema</a>
+                <a href="/consultar/" class="btn btn-outline-light rounded-pill fw-bold px-4 py-2"><i class="bi bi-search"></i> Consultar seguimiento</a>
+            </div>
+            <div class="row g-3 mt-4">
+                <div class="col-md-4"><div class="mini-stat"><strong>01</strong><span>Registro del reclamo</span></div></div>
+                <div class="col-md-4"><div class="mini-stat"><strong>02</strong><span>Validación por junta vecinal</span></div></div>
+                <div class="col-md-4"><div class="mini-stat"><strong>03</strong><span>Seguimiento hasta resolución</span></div></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-megaphone"></i></div>
+                <h5 class="fw-bold">Reportes ordenados</h5>
+                <p class="text-muted mb-0">El vecino registra baches, basura, alumbrado dañado u otros problemas con descripción, ubicación y foto opcional.</p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="feature-card">
+                <div class="feature-icon blue"><i class="bi bi-upc-scan"></i></div>
+                <h5 class="fw-bold">Número de seguimiento</h5>
+                <p class="text-muted mb-0">Cada reclamo genera un código único para consultar el estado sin depender de llamadas, papel o mensajes perdidos.</p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-bar-chart-line"></i></div>
+                <h5 class="fw-bold">Dashboard vecinal</h5>
+                <p class="text-muted mb-0">Los presidentes de junta pueden revisar reportes de su barrio, cambiar estados y ver estadísticas básicas.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card-modern h-100">
+                <div class="card-body d-flex flex-column">
+                    <span class="feature-icon"><i class="bi bi-plus-circle"></i></span>
+                    <h4 class="fw-bold">Reportar un problema</h4>
+                    <p class="text-muted flex-grow-1">Registra un nuevo reclamo urbano para que pueda ser atendido y monitoreado.</p>
+                    <a href="/reportar/" class="btn btn-accent-custom align-self-start"><i class="bi bi-send"></i> Crear reporte</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-modern h-100">
+                <div class="card-body d-flex flex-column">
+                    <span class="feature-icon blue"><i class="bi bi-search"></i></span>
+                    <h4 class="fw-bold">Consultar reclamo</h4>
+                    <p class="text-muted flex-grow-1">Ingresa tu número de seguimiento y revisa el estado actual de tu solicitud.</p>
+                    <a href="/consultar/" class="btn btn-success-custom align-self-start"><i class="bi bi-search"></i> Consultar estado</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="card-modern mt-4">
+        <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <h5 class="fw-bold mb-1">Bienvenido, {{ user.first_name|default:user.username }}</h5>
+                <p class="text-muted mb-0">Puedes revisar tus reportes y su estado desde el dashboard.</p>
+            </div>
+            <a href="/dashboard/" class="btn btn-primary-custom"><i class="bi bi-speedometer2"></i> Ver dashboard</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

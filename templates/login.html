@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block titulo %}Iniciar Sesión{% endblock %}
+{% block contenido %}
+<style>
+.auth-shell{max-width:1120px;margin:0 auto}.auth-panel{background:linear-gradient(135deg,rgba(26,74,58,.98),rgba(58,95,122,.96));border-radius:26px;overflow:hidden;box-shadow:0 24px 70px rgba(15,23,42,.16)}.auth-side{color:#fff;padding:38px}.auth-side .mini-badge{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .75rem;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);border-radius:999px;font-weight:700;font-size:.82rem}.auth-side h2{font-weight:900;letter-spacing:-.03em;margin-top:1rem}.auth-feature{display:flex;gap:.8rem;margin-top:1rem;color:rgba(255,255,255,.88)}.auth-feature i{font-size:1.25rem}.auth-card{background:rgba(255,255,255,.98);border-radius:22px;padding:34px;box-shadow:0 18px 45px rgba(15,23,42,.10)}.input-wrap{position:relative}.input-wrap i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#7a8a9a}.input-wrap input{padding-left:44px}.soft-note{background:#f7faf9;border:1px solid #e6efec;border-radius:16px;padding:14px;color:#607080;font-size:.92rem}
+</style>
+<div class="page-shell">
+    <div class="auth-shell">
+        <div class="row g-4 align-items-stretch">
+            <div class="col-lg-6">
+                <div class="auth-panel h-100">
+                    <div class="auth-side h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <span class="mini-badge"><i class="bi bi-shield-check"></i> Acceso seguro SIGEREC</span>
+                            <h2>Gestión ciudadana con seguimiento real.</h2>
+                            <p class="mt-3 mb-4" style="color:rgba(255,255,255,.82);">Ingresa para registrar reclamos, revisar avances y dar seguimiento a los problemas urbanos de tu barrio.</p>
+                            <div class="auth-feature"><i class="bi bi-geo-alt"></i><div><strong>Reportes con ubicación</strong><br><span>GPS y referencia manual para ubicar el problema con precisión.</span></div></div>
+                            <div class="auth-feature"><i class="bi bi-clock-history"></i><div><strong>Historial de atención</strong><br><span>Cada cambio de estado queda registrado para mayor transparencia.</span></div></div>
+                            <div class="auth-feature"><i class="bi bi-bar-chart"></i><div><strong>Dashboard operativo</strong><br><span>Panel para vecinos y presidentes de junta vecinal.</span></div></div>
+                        </div>
+                        <small style="color:rgba(255,255,255,.65);">Trinidad, Beni - Bolivia</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="auth-card h-100 d-flex flex-column justify-content-center">
+                    <div class="mb-4">
+                        <h2 class="section-title mb-1">Iniciar sesión</h2>
+                        <p class="section-subtitle mb-0">Usa tu Carnet de Identidad como usuario.</p>
+                    </div>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags|default:'info' }}"><i class="bi bi-info-circle"></i> {{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Carnet de Identidad</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-person-vcard"></i>
+                                <input type="text" name="username" id="username" class="form-control-modern" placeholder="Ej: 12345678" required autofocus autocomplete="username">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-lock"></i>
+                                <input type="password" name="password" id="password" class="form-control-modern" placeholder="Ingresa tu contraseña" required autocomplete="current-password">
+                            </div>
+                        </div>
+                        <div class="soft-note mb-4"><i class="bi bi-lightbulb"></i> Si eres presidente de junta, al ingresar verás el panel de gestión de tu barrio.</div>
+                        <button type="submit" class="btn btn-success-custom w-100"><i class="bi bi-box-arrow-in-right"></i> Entrar al sistema</button>
+                    </form>
+                    <p class="text-muted text-center mt-4 mb-0">¿No tienes cuenta? <a href="/registro/" class="fw-bold">Crear cuenta vecinal</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

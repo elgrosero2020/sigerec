@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Mi Panel Ciudadano{% endblock %}
+
+{% block contenido %}
+<style>
+    .citizen-hero {
+        background: linear-gradient(135deg, rgba(26, 74, 58, 0.98), rgba(58, 95, 122, 0.95));
+        border-radius: 26px;
+        padding: 28px;
+        color: #fff;
+        box-shadow: 0 20px 50px rgba(26, 74, 58, 0.18);
+        position: relative;
+        overflow: hidden;
+    }
+    .citizen-hero::after {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        right: -80px;
+        top: -90px;
+        background: rgba(255,255,255,0.10);
+    }
+    .citizen-hero .content {
+        position: relative;
+        z-index: 2;
+    }
+    .citizen-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.22);
+        padding: 8px 13px;
+        border-radius: 999px;
+        font-size: .9rem;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+    .citizen-card {
+        background: #fff;
+        border-radius: 22px;
+        border: 1px solid rgba(26, 74, 58, 0.08);
+        box-shadow: 0 12px 35px rgba(44, 62, 80, 0.08);
+        transition: transform .18s ease, box-shadow .18s ease;
+        height: 100%;
+    }
+    .citizen-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 18px 45px rgba(44, 62, 80, 0.12);
+    }
+    .citizen-metric {
+        padding: 22px;
+    }
+    .metric-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(26, 74, 58, 0.10);
+        color: var(--primary);
+        font-size: 1.35rem;
+        margin-bottom: 12px;
+    }
+    .metric-number {
+        font-size: 2.1rem;
+        line-height: 1;
+        font-weight: 800;
+        color: var(--primary);
+    }
+    .metric-label {
+        color: var(--muted);
+        font-weight: 600;
+        margin-top: 5px;
+    }
+    .progress-soft {
+        height: 10px;
+        border-radius: 999px;
+        background: #eef3f0;
+        overflow: hidden;
+    }
+    .progress-soft .bar {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    }
+    .section-title-soft {
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 4px;
+    }
+    .tracking-card {
+        border: 1px solid rgba(26, 74, 58, 0.08);
+        border-radius: 18px;
+        padding: 18px;
+        background: #fff;
+        box-shadow: 0 10px 28px rgba(44, 62, 80, 0.06);
+        margin-bottom: 14px;
+    }
+    .tracking-code {
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: .3px;
+    }
+    .empty-state {
+        border: 1px dashed rgba(26, 74, 58, 0.25);
+        background: linear-gradient(180deg, #ffffff, #f7faf8);
+        border-radius: 22px;
+        padding: 42px 20px;
+        text-align: center;
+    }
+</style>
+
+<div class="citizen-hero mb-4">
+    <div class="content d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-center">
+        <div>
+            <div class="citizen-chip"><i class="bi bi-person-check"></i> Panel ciudadano</div>
+            <div class="citizen-chip"><i class="bi bi-geo-alt"></i> {{ vecino.barrio }}</div>
+            <h2 class="fw-bold mb-2 mt-2">Hola, {{ vecino.nombre }}</h2>
+            <p class="mb-0 opacity-75">Desde aquí puedes revisar el avance de tus reclamos, abrir el detalle y registrar nuevos problemas urbanos.</p>
+        </div>
+        <div class="text-lg-end">
+            <a href="/reportar/" class="btn btn-light fw-bold px-4 py-2" style="border-radius: 999px;">
+                <i class="bi bi-plus-circle"></i> Nuevo reporte
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="citizen-card citizen-metric">
+            <div class="metric-icon"><i class="bi bi-file-earmark-text"></i></div>
+            <div class="metric-number">{{ total_reportes }}</div>
+            <div class="metric-label">Reportes registrados</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="citizen-card citizen-metric">
+            <div class="metric-icon"><i class="bi bi-hourglass-split"></i></div>
+            <div class="metric-number">{{ reportes_pendientes }}</div>
+            <div class="metric-label">En seguimiento</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="citizen-card citizen-metric">
+            <div class="metric-icon"><i class="bi bi-check2-circle"></i></div>
+            <div class="metric-number">{{ reportes_resueltos }}</div>
+            <div class="metric-label">Resueltos</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-5">
+        <div class="citizen-card p-4">
+            <h5 class="section-title-soft"><i class="bi bi-activity"></i> Resumen personal</h5>
+            <p class="text-muted small mb-4">Estado general de tus reclamos registrados en SIGEREC.</p>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-semibold">Reportado</span>
+                <span class="badge badge-estado badge-reportado">{{ reportes_por_estado.reportado }}</span>
+            </div>
+            <div class="progress-soft mb-3"><div class="bar" style="width: {% if total_reportes %}{{ reportes_por_estado.reportado }}0{% else %}0{% endif %}%;"></div></div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-semibold">Validado</span>
+                <span class="badge badge-estado badge-validado">{{ reportes_por_estado.validado }}</span>
+            </div>
+            <div class="progress-soft mb-3"><div class="bar" style="width: {% if total_reportes %}{{ reportes_por_estado.validado }}0{% else %}0{% endif %}%;"></div></div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-semibold">Derivado</span>
+                <span class="badge badge-estado badge-derivado">{{ reportes_por_estado.derivado }}</span>
+            </div>
+            <div class="progress-soft mb-3"><div class="bar" style="width: {% if total_reportes %}{{ reportes_por_estado.derivado }}0{% else %}0{% endif %}%;"></div></div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-semibold">En proceso</span>
+                <span class="badge badge-estado badge-proceso">{{ reportes_por_estado.proceso }}</span>
+            </div>
+            <div class="progress-soft mb-3"><div class="bar" style="width: {% if total_reportes %}{{ reportes_por_estado.proceso }}0{% else %}0{% endif %}%;"></div></div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-semibold">Resuelto</span>
+                <span class="badge badge-estado badge-resuelto">{{ reportes_por_estado.resuelto }}</span>
+            </div>
+            <div class="progress-soft"><div class="bar" style="width: {% if total_reportes %}{{ reportes_por_estado.resuelto }}0{% else %}0{% endif %}%;"></div></div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="citizen-card p-4">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                <div>
+                    <h5 class="section-title-soft"><i class="bi bi-clock-history"></i> Seguimiento reciente</h5>
+                    <p class="text-muted small mb-0">Tus últimos reclamos registrados y su estado actual.</p>
+                </div>
+                <a href="/reportar/" class="btn btn-sm btn-outline-success" style="border-radius: 999px;">
+                    <i class="bi bi-plus"></i> Reportar
+                </a>
+            </div>
+
+            {% if ultimos_reportes %}
+                {% for reporte in ultimos_reportes %}
+                    <div class="tracking-card">
+                        <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+                            <div>
+                                <div class="tracking-code">{{ reporte.numero_seguimiento }}</div>
+                                <div class="text-muted small">{{ reporte.get_tipo_display }} · {{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</div>
+                            </div>
+                            <div>
+                                <span class="badge badge-estado 
+                                    {% if reporte.estado == 'reportado' %}badge-reportado
+                                    {% elif reporte.estado == 'validado' %}badge-validado
+                                    {% elif reporte.estado == 'derivado' %}badge-derivado
+                                    {% elif reporte.estado == 'proceso' %}badge-proceso
+                                    {% elif reporte.estado == 'resuelto' %}badge-resuelto
+                                    {% endif %}">
+                                    {{ reporte.get_estado_display }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <div class="fw-semibold"><i class="bi bi-geo-alt"></i> Ubicación referencial</div>
+                            <div class="text-muted small">{{ reporte.ubicacion }}</div>
+                        </div>
+
+                        {% if reporte.tiene_gps %}
+                            <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+                                <span class="gps-pill"><i class="bi bi-crosshair"></i> GPS registrado</span>
+                                <a href="{{ reporte.google_maps_url }}" target="_blank" class="gps-link-button"><i class="bi bi-map"></i> Abrir en Google Maps</a>
+                                <a href="{% url 'detalle_reporte' reporte.numero_seguimiento %}" class="btn btn-sm btn-outline-success" style="border-radius: 999px;"><i class="bi bi-eye"></i> Ver detalle</a>
+                            </div>
+                            <div class="gps-coordinates mt-2">{{ reporte.latitud }}, {{ reporte.longitud }}</div>
+                            <div class="sigerec-map map-mini mt-2" data-lat="{{ reporte.latitud|stringformat:'f' }}" data-lng="{{ reporte.longitud|stringformat:'f' }}" data-label="{{ reporte.numero_seguimiento }}"></div>
+                        {% else %}
+                            <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+                                <span class="text-muted small"><i class="bi bi-dash-circle"></i> Sin GPS registrado</span>
+                                <a href="{% url 'detalle_reporte' reporte.numero_seguimiento %}" class="btn btn-sm btn-outline-success" style="border-radius: 999px;"><i class="bi bi-eye"></i> Ver detalle</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% include "components/empty_state.html" with icon="bi-inbox" title="Aún no tienes reclamos registrados" message="Cuando reportes un problema urbano, aparecerá aquí con su código de seguimiento, estado, ubicación y detalle." action_url="/reportar/" action_text="Registrar primer reporte" action_icon="bi-plus-circle" %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="citizen-card p-4">
+            <h5 class="section-title-soft"><i class="bi bi-tags"></i> Tipos reportados</h5>
+            <p class="text-muted small">Clasificación de tus reclamos por categoría.</p>
+            <div class="list-group list-group-flush">
+                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <span><i class="bi bi-exclamation-triangle" style="color: var(--primary-2);"></i> Baches</span>
+                    <strong>{{ reportes_por_tipo.bache }}</strong>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <span><i class="bi bi-trash" style="color: var(--primary-2);"></i> Basura acumulada</span>
+                    <strong>{{ reportes_por_tipo.basura }}</strong>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <span><i class="bi bi-lightbulb" style="color: var(--primary-2);"></i> Alumbrado dañado</span>
+                    <strong>{{ reportes_por_tipo.alumbrado }}</strong>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <span><i class="bi bi-three-dots" style="color: var(--muted);"></i> Otros</span>
+                    <strong>{{ reportes_por_tipo.otro }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="citizen-card p-4">
+            <h5 class="section-title-soft"><i class="bi bi-info-circle"></i> Recomendaciones</h5>
+            <p class="text-muted small">Para que tu reporte tenga mejor seguimiento:</p>
+            <div class="d-grid gap-3">
+                <div class="d-flex gap-3">
+                    <div class="metric-icon mb-0" style="width: 40px; height: 40px; font-size: 1rem;"><i class="bi bi-camera"></i></div>
+                    <div><strong>Adjunta evidencia</strong><div class="text-muted small">Una foto ayuda a validar el problema más rápido.</div></div>
+                </div>
+                <div class="d-flex gap-3">
+                    <div class="metric-icon mb-0" style="width: 40px; height: 40px; font-size: 1rem;"><i class="bi bi-crosshair"></i></div>
+                    <div><strong>Usa GPS</strong><div class="text-muted small">Permite ubicar el reclamo con mayor precisión.</div></div>
+                </div>
+                <div class="d-flex gap-3">
+                    <div class="metric-icon mb-0" style="width: 40px; height: 40px; font-size: 1rem;"><i class="bi bi-card-text"></i></div>
+                    <div><strong>Describe con claridad</strong><div class="text-muted small">Indica referencias, calles y detalles del problema.</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

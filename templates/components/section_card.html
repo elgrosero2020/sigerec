@@ -1,0 +1,11 @@
+<div class="sigerec-section-card {{ extra_class|default:'' }}">
+    {% if title %}
+        <div class="sigerec-section-header">
+            <span>{% if icon %}<i class="bi {{ icon }}"></i>{% endif %} {{ title }}</span>
+            {% if badge %}<span class="badge bg-light text-dark">{{ badge }}</span>{% endif %}
+        </div>
+    {% endif %}
+    <div class="sigerec-section-body">
+        {{ content }}
+    </div>
+</div>

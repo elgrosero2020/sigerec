@@ -1,0 +1,38 @@
+/* SIGEREC UI v1.3.4 — Navegación institucional */
+.sigerec-institutional-header{z-index:1030;box-shadow:0 14px 34px rgba(18,60,50,.16);} 
+.sigerec-topbar{background:#0B2E27;color:rgba(255,255,255,.82);font-size:.78rem;font-weight:750;border-bottom:1px solid rgba(255,255,255,.08);} 
+.sigerec-topbar-inner{min-height:34px;display:flex;align-items:center;justify-content:space-between;gap:1rem;} 
+.sigerec-topbar i{color:#8FE0B8;margin-right:.35rem;} 
+.sigerec-session-status{display:inline-flex;align-items:center;gap:.35rem;} 
+.sigerec-session-status .bi-circle-fill{font-size:.52rem;color:#52E08A;filter:drop-shadow(0 0 6px rgba(82,224,138,.45));}
+.sigerec-mainnav{background:rgba(18,60,50,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.12);padding:.78rem 0;} 
+.sigerec-brand{display:inline-flex;align-items:center;gap:.85rem;text-decoration:none;color:#fff!important;min-width:0;} 
+.sigerec-brand-logo{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 24px rgba(0,0,0,.16);overflow:hidden;flex:0 0 auto;} 
+.sigerec-brand-logo img{width:100%;height:100%;object-fit:contain;padding:.18rem;filter:drop-shadow(0 5px 10px rgba(0,0,0,.16));} 
+.sigerec-brand-copy{display:flex;flex-direction:column;line-height:1.05;min-width:0;} 
+.sigerec-brand-copy strong{font-size:1.15rem;font-weight:950;letter-spacing:-.055em;} 
+.sigerec-brand-copy small{font-size:.74rem;font-weight:700;letter-spacing:.01em;color:rgba(255,255,255,.72);white-space:nowrap;} 
+.sigerec-nav-list{gap:.25rem;} 
+.sigerec-nav-link,.sigerec-login-btn{display:inline-flex;align-items:center;gap:.45rem;text-decoration:none;border-radius:999px;padding:.62rem .88rem!important;color:rgba(255,255,255,.82)!important;font-weight:800;font-size:.92rem;transition:background .18s ease, transform .18s ease, color .18s ease, box-shadow .18s ease;} 
+.sigerec-nav-link:hover{background:rgba(255,255,255,.12);color:#fff!important;transform:translateY(-1px);} 
+.sigerec-nav-link.active{background:rgba(255,255,255,.18);color:#fff!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);} 
+.sigerec-login-btn{background:#fff;color:var(--primary)!important;box-shadow:0 12px 24px rgba(0,0,0,.14);} 
+.sigerec-login-btn:hover,.sigerec-login-btn.active{transform:translateY(-1px);filter:brightness(1.03);color:var(--primary)!important;} 
+.sigerec-toggler{border:1px solid rgba(255,255,255,.24);border-radius:14px;padding:.45rem .6rem;} 
+.sigerec-toggler .navbar-toggler-icon{filter:invert(1);} 
+.sigerec-user-pill{display:inline-flex;align-items:center;gap:.62rem;text-decoration:none;color:#fff!important;border-radius:999px;padding:.42rem .7rem .42rem .42rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);transition:.18s ease;} 
+.sigerec-user-pill:hover{background:rgba(255,255,255,.18);transform:translateY(-1px);} 
+.sigerec-user-avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#DFF9EA,#9CE7BE);color:var(--primary);font-size:1.05rem;box-shadow:0 8px 18px rgba(0,0,0,.14);} 
+.sigerec-user-copy{display:flex;flex-direction:column;line-height:1.08;max-width:180px;} 
+.sigerec-user-copy strong{font-size:.86rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} 
+.sigerec-user-copy small{font-size:.68rem;font-weight:750;color:rgba(255,255,255,.70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} 
+.sigerec-user-menu{border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:.55rem;min-width:240px;} 
+.sigerec-user-menu .dropdown-item{border-radius:12px;font-weight:750;padding:.65rem .75rem;} 
+.sigerec-breadcrumb-wrap{width:min(1480px,100%);margin:0 auto 1rem auto;} 
+.sigerec-breadcrumb{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem .85rem;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(229,234,240,.95);box-shadow:0 8px 20px rgba(18,60,50,.06);backdrop-filter:blur(8px);color:var(--muted);font-size:.84rem;font-weight:800;} 
+.sigerec-breadcrumb a{color:var(--primary-2);text-decoration:none;} 
+.sigerec-breadcrumb a:hover{text-decoration:underline;} 
+.sigerec-breadcrumb span{color:var(--ink);} 
+.footer-custom{margin-top:auto;} 
+@media(max-width:991.98px){.sigerec-mainnav{padding:.65rem 0}.sigerec-nav-list{padding-top:1rem;align-items:stretch!important}.sigerec-nav-link,.sigerec-login-btn,.sigerec-user-pill{width:100%;justify-content:flex-start}.sigerec-user-pill{border-radius:18px}.sigerec-user-copy{max-width:none}.sigerec-brand-logo{width:48px;height:48px}.sigerec-brand-copy small{white-space:normal}.sigerec-topbar-inner{justify-content:center;text-align:center}.sigerec-topbar-inner span:not(:first-child):not(.sigerec-session-status){display:none!important}} 
+@media(max-width:575.98px){.sigerec-brand-copy small{display:none}.sigerec-brand-copy strong{font-size:1.05rem}.sigerec-breadcrumb{border-radius:16px;flex-wrap:wrap}.sigerec-breadcrumb-wrap{margin-bottom:.75rem}}

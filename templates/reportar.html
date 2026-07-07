@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block titulo %}Reportar Problema{% endblock %}
+{% block contenido %}
+<style>
+.report-layout{width:100%;max-width:1480px;margin:0 auto}.report-guide{background:linear-gradient(135deg,#1A4A3A,#3A5F7A);color:#fff;border-radius:26px;padding:32px;box-shadow:0 24px 70px rgba(15,23,42,.16);position:sticky;top:92px}.guide-item{display:flex;gap:.9rem;margin-top:1rem;color:rgba(255,255,255,.88)}.guide-item i{font-size:1.35rem}.report-form-card{background:white;border:1px solid #e9eef2;border-radius:24px;box-shadow:0 20px 55px rgba(15,23,42,.10);overflow:hidden}.report-form-head{padding:28px 34px;border-bottom:1px solid #edf1f4;background:#fbfcfd}.report-form-body{padding:34px}.gps-panel-premium{border:1px solid #dcebe5;background:linear-gradient(135deg,#f7fbf9,#eef7f3);border-radius:18px;padding:18px}.gps-status-card{border-radius:14px;padding:12px 14px}.file-box{background:#f8fafc;border:1px dashed #cfd8df;border-radius:16px;padding:16px}.precision-list{margin:0;padding-left:1.1rem;color:rgba(255,255,255,.78)}@media(max-width:991px){.report-guide{position:static}.report-form-body{padding:22px}}
+</style>
+<div class="app-page">
+    <section class="page-hero-compact">
+        <span class="page-kicker"><i class="bi bi-clipboard-plus"></i> Nuevo reclamo ciudadano</span>
+        <h1>Registrar reclamo urbano</h1>
+        <p>Describe el problema, guarda una referencia clara y usa GPS para generar un reporte más preciso.</p>
+    </section>
+    <div class="report-layout">
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-4">
+                <div class="report-guide">
+                    <span class="badge rounded-pill text-bg-light text-success mb-3"><i class="bi bi-clipboard-plus"></i> Nuevo reclamo</span>
+                    <h2 class="fw-black mb-3" style="font-weight:900;letter-spacing:-.03em;">Registra el problema con datos útiles.</h2>
+                    <p style="color:rgba(255,255,255,.82);">Mientras más completo sea el reporte, más fácil será validarlo y derivarlo correctamente.</p>
+                    <div class="guide-item"><i class="bi bi-tags"></i><div><strong>Clasifica el tipo</strong><br><small>Bache, basura, alumbrado u otro.</small></div></div>
+                    <div class="guide-item"><i class="bi bi-pencil-square"></i><div><strong>Describe el problema</strong><br><small>Explica qué ocurre, desde cuándo y qué afecta.</small></div></div>
+                    <div class="guide-item"><i class="bi bi-crosshair"></i><div><strong>Usa GPS si puedes</strong><br><small>Ayuda a ubicar el reclamo con precisión.</small></div></div>
+                    <hr style="border-color:rgba(255,255,255,.18);">
+                    <small class="d-block mb-2" style="color:rgba(255,255,255,.78);">Recomendaciones:</small>
+                    <ul class="precision-list small"><li>Escribe una referencia clara.</li><li>Adjunta foto si el problema es visible.</li><li>Evita datos incompletos.</li></ul>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="report-form-card">
+                    <div class="report-form-head">
+                        <h2 class="section-title mb-1">Datos del reclamo</h2>
+                        <p class="section-subtitle mb-0">Completa la información necesaria para que la junta vecinal pueda validar y dar seguimiento al caso.</p>
+                    </div>
+                    <div class="report-form-body">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% if form.errors %}
+                                <div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Corrige los siguientes problemas:<ul class="mb-0 mt-2">{% for field, errors in form.errors.items %}{% for error in errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}</ul></div>
+                            {% endif %}
+                            <div class="mb-3"><label for="id_tipo" class="form-label">Tipo de problema</label>{{ form.tipo }}</div>
+                            <div class="mb-3"><label for="id_descripcion" class="form-label">Descripción detallada</label>{{ form.descripcion }}<small class="text-muted d-block mt-1"><i class="bi bi-info-circle"></i> Ejemplo: “Bache profundo frente a la cancha, dificulta el paso de vehículos”.</small></div>
+                            <div class="mb-3">
+                                <label for="id_ubicacion" class="form-label">Ubicación / referencia</label>
+                                {{ form.ubicacion }}{{ form.latitud }}{{ form.longitud }}
+                                <div class="gps-panel-premium mt-3">
+                                    <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                                        <div>
+                                            <span class="badge rounded-pill text-bg-success"><i class="bi bi-crosshair"></i> Ubicación GPS</span>
+                                            <div id="gpsEstado" class="small text-muted mt-2">Puedes escribir una referencia y guardar coordenadas exactas del lugar.</div>
+                                        </div>
+                                        <button type="button" id="btnUsarGps" class="btn btn-outline-custom btn-sm"><i class="bi bi-crosshair"></i> Usar mi ubicación actual</button>
+                                    </div>
+                                    <div id="gpsResultado" class="gps-status-card alert alert-success mt-3 mb-0 d-none"><i class="bi bi-check-circle"></i> Ubicación GPS capturada correctamente. <a id="gpsLink" href="#" target="_blank" class="fw-bold ms-1">Ver en Google Maps</a></div>
+                                    <div id="gpsError" class="gps-status-card alert alert-warning mt-3 mb-0 d-none"><i class="bi bi-exclamation-triangle"></i> No se pudo obtener la ubicación. Puedes escribir la dirección manualmente.</div>
+                                </div>
+                            </div>
+                            <div class="mb-4"><label for="id_foto" class="form-label">Evidencia fotográfica opcional</label><div class="file-box">{{ form.foto }}<small class="text-muted d-block mt-2"><i class="bi bi-camera"></i> Adjunta una imagen en JPEG, PNG o WebP.</small></div></div>
+                            <div class="d-grid d-md-flex gap-2 justify-content-md-end"><a href="/dashboard/" class="btn btn-outline-custom"><i class="bi bi-arrow-left"></i> Cancelar</a><button type="submit" class="btn btn-accent-custom"><i class="bi bi-send"></i> Enviar reporte</button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('btnUsarGps');
+    const estado = document.getElementById('gpsEstado');
+    const resultado = document.getElementById('gpsResultado');
+    const errorBox = document.getElementById('gpsError');
+    const link = document.getElementById('gpsLink');
+    const latInput = document.getElementById('id_latitud');
+    const lngInput = document.getElementById('id_longitud');
+    const ubicacionInput = document.getElementById('id_ubicacion');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+        resultado.classList.add('d-none'); errorBox.classList.add('d-none');
+        if (!navigator.geolocation) { estado.textContent = 'Tu navegador no permite geolocalización.'; errorBox.classList.remove('d-none'); return; }
+        btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Obteniendo ubicación...'; estado.textContent = 'Acepta el permiso de ubicación del navegador.';
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                const lat = position.coords.latitude.toFixed(7); const lng = position.coords.longitude.toFixed(7);
+                latInput.value = lat; lngInput.value = lng;
+                if (!ubicacionInput.value.trim()) ubicacionInput.value = `GPS: ${lat}, ${lng}`;
+                link.href = `https://www.google.com/maps?q=${lat},${lng}`; resultado.classList.remove('d-none'); estado.textContent = `Coordenadas guardadas: ${lat}, ${lng}`;
+                btn.disabled = false; btn.innerHTML = '<i class="bi bi-crosshair"></i> Actualizar ubicación GPS';
+            },
+            function () { estado.textContent = 'No se pudo capturar la ubicación.'; errorBox.classList.remove('d-none'); btn.disabled = false; btn.innerHTML = '<i class="bi bi-crosshair"></i> Usar mi ubicación actual'; },
+            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+        );
+    });
+});
+</script>
+{% endblock %}

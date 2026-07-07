@@ -1,0 +1,8 @@
+<div class="sigerec-empty-state">
+    <div class="sigerec-empty-icon"><i class="bi {{ icon|default:'bi-inbox' }}"></i></div>
+    <h3>{{ title|default:'Sin registros disponibles' }}</h3>
+    <p>{{ message|default:'No hay información para mostrar con los criterios actuales.' }}</p>
+    {% if action_url and action_text %}
+        <a href="{{ action_url }}" class="btn btn-primary-custom"><i class="bi {{ action_icon|default:'bi-plus-circle' }}"></i> {{ action_text }}</a>
+    {% endif %}
+</div>

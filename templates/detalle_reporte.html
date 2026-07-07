@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% block titulo %}Detalle del Reclamo{% endblock %}
+
+{% block contenido %}
+<style>
+    .detail-hero{position:relative;overflow:hidden;border-radius:28px;padding:1.7rem;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-2) 55%,var(--accent));box-shadow:var(--shadow);margin-bottom:1.5rem}
+    .detail-hero:before{content:"";position:absolute;right:-3rem;top:-4rem;width:14rem;height:14rem;border-radius:50%;background:rgba(255,255,255,.13)}
+    .detail-hero:after{content:"";position:absolute;left:-4rem;bottom:-6rem;width:13rem;height:13rem;border-radius:50%;background:rgba(86,204,242,.14)}
+    .detail-hero-content{position:relative;z-index:1}
+    .detail-kicker{display:inline-flex;align-items:center;gap:.45rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.23);border-radius:999px;padding:.4rem .75rem;font-weight:850;font-size:.82rem;margin-bottom:.85rem}
+    .detail-title{font-size:clamp(1.9rem,4vw,3rem);font-weight:950;letter-spacing:-.055em;margin:0}
+    .detail-subtitle{opacity:.9;max-width:760px;margin:.55rem 0 0;font-weight:600}
+    .detail-action{border-radius:999px;font-weight:850;padding:.72rem 1rem;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.16);color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem}
+    .detail-action:hover{background:#fff;color:var(--primary)}
+    .detail-card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow-sm);overflow:hidden;height:100%}
+    .detail-card-header{padding:1.1rem 1.25rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:1rem;background:linear-gradient(180deg,#fff,#F8FBFA)}
+    .detail-card-header h5{margin:0;font-weight:950;color:var(--primary);letter-spacing:-.025em;display:flex;align-items:center;gap:.55rem}
+    .detail-card-body{padding:1.25rem}
+    .detail-code{font-size:1.65rem;font-weight:950;color:var(--primary);letter-spacing:-.04em}
+    .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem;margin-top:1rem}
+    .info-item{border:1px solid var(--line);border-radius:18px;padding:.95rem;background:#fff}
+    .info-item.full{grid-column:1/-1}
+    .info-label{font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:.25rem}
+    .info-value{font-weight:800;color:var(--ink);line-height:1.35;word-break:break-word}
+    .info-value.muted{color:var(--muted);font-weight:700}
+    .status-strip{display:flex;gap:.45rem;align-items:center;flex-wrap:wrap;margin-top:.85rem}
+    .status-step{height:.45rem;flex:1;min-width:42px;border-radius:99px;background:#E8EEF4;overflow:hidden}
+    .status-step.active{background:linear-gradient(90deg,var(--primary-2),var(--accent))}
+    .gps-panel{border-radius:22px;padding:1rem;background:linear-gradient(180deg,#F8FBFA,#fff);border:1px solid var(--line)}
+    .gps-coordinate-box{font-size:.86rem;font-weight:800;color:var(--muted);background:#fff;border:1px dashed rgba(31,107,80,.28);border-radius:15px;padding:.7rem .85rem;margin:.85rem 0}
+    .photo-preview{display:block;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#fff;text-decoration:none;color:inherit;box-shadow:0 10px 24px rgba(18,42,31,.08)}
+    .photo-preview img{width:100%;height:auto;max-height:420px;object-fit:contain;display:block;background:#F8FBFA}
+    .photo-preview-footer{padding:.8rem .95rem;font-weight:850;color:var(--primary);display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+    .timeline-premium{position:relative;padding-left:1.15rem;max-width:100%;overflow:hidden}
+    .timeline-premium:before{content:"";position:absolute;left:.35rem;top:.3rem;bottom:.3rem;width:3px;border-radius:99px;background:linear-gradient(var(--primary-2),rgba(47,128,237,.22))}
+    .timeline-premium-item{position:relative;padding-left:1.25rem;padding-bottom:1.1rem;max-width:100%}
+    .timeline-premium-item:last-child{padding-bottom:0}
+    .timeline-premium-dot{position:absolute;left:-.02rem;top:.22rem;width:.82rem;height:.82rem;border-radius:50%;background:var(--primary-2);border:3px solid #fff;box-shadow:0 0 0 4px rgba(31,107,80,.13)}
+    .timeline-premium-card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:.95rem 1rem;max-width:100%;overflow-wrap:anywhere}
+    .timeline-premium-title{font-weight:950;color:var(--ink);line-height:1.2}
+    .timeline-premium-date{font-size:.8rem;color:var(--muted);font-weight:800;margin-top:.25rem}
+    .timeline-premium-text{margin-top:.55rem;color:var(--muted);font-weight:650}
+    .empty-state-soft{border:1px dashed rgba(31,107,80,.25);border-radius:20px;background:#F8FBFA;padding:1.2rem;text-align:center;color:var(--muted);font-weight:700}
+    .detail-lower-row{clear:both;position:relative;z-index:1}
+    @media(max-width:768px){.info-grid{grid-template-columns:1fr}.detail-hero{padding:1.35rem;border-radius:22px}.detail-code{font-size:1.35rem}.photo-preview img{max-height:320px}}
+</style>
+
+<div class="page-shell">
+    <div class="detail-hero">
+        <div class="detail-hero-content d-flex flex-wrap justify-content-between align-items-end gap-3">
+            <div>
+                <div class="detail-kicker"><i class="bi bi-clipboard2-pulse"></i> Ficha técnica de seguimiento</div>
+                <h2 class="detail-title">Reclamo {{ reporte.numero_seguimiento }}</h2>
+                <p class="detail-subtitle">Vista integral del reclamo ciudadano: información, estado actual, ubicación, evidencia fotográfica e historial operativo.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'consultar' %}" class="detail-action"><i class="bi bi-search"></i> Nueva consulta</a>
+                {% if user.is_authenticated %}<a href="{% url 'dashboard' %}" class="detail-action"><i class="bi bi-speedometer2"></i> Dashboard</a>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 align-items-stretch">
+        <div class="col-lg-8">
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h5><i class="bi bi-info-circle"></i> Información principal</h5>
+                    <span class="badge badge-estado {% if reporte.estado == 'reportado' %}badge-reportado{% elif reporte.estado == 'validado' %}badge-validado{% elif reporte.estado == 'derivado' %}badge-derivado{% elif reporte.estado == 'proceso' %}badge-proceso{% elif reporte.estado == 'resuelto' %}badge-resuelto{% endif %}">{{ reporte.get_estado_display }}</span>
+                </div>
+                <div class="detail-card-body">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                        <div>
+                            <div class="detail-code">{{ reporte.numero_seguimiento }}</div>
+                            <div class="text-muted fw-semibold"><i class="bi bi-calendar-event"></i> Registrado el {{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</div>
+                        </div>
+                        <div class="text-md-end text-muted fw-semibold"><i class="bi bi-arrow-repeat"></i> Actualizado<br><strong>{{ reporte.fecha_actualizacion|date:"d/m/Y H:i" }}</strong></div>
+                    </div>
+
+                    <div class="status-strip" title="Avance visual del estado">
+                        <div class="status-step active"></div>
+                        <div class="status-step {% if reporte.estado == 'validado' or reporte.estado == 'derivado' or reporte.estado == 'proceso' or reporte.estado == 'resuelto' %}active{% endif %}"></div>
+                        <div class="status-step {% if reporte.estado == 'derivado' or reporte.estado == 'proceso' or reporte.estado == 'resuelto' %}active{% endif %}"></div>
+                        <div class="status-step {% if reporte.estado == 'proceso' or reporte.estado == 'resuelto' %}active{% endif %}"></div>
+                        <div class="status-step {% if reporte.estado == 'resuelto' %}active{% endif %}"></div>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item"><div class="info-label">Tipo de problema</div><div class="info-value"><i class="bi bi-tag"></i> {{ reporte.get_tipo_display }}</div></div>
+                        <div class="info-item"><div class="info-label">Barrio</div><div class="info-value"><i class="bi bi-houses"></i> {{ reporte.vecino.barrio }}</div></div>
+                        <div class="info-item"><div class="info-label">Vecino reportante</div><div class="info-value"><i class="bi bi-person"></i> {{ reporte.vecino.nombre }}</div></div>
+                        <div class="info-item"><div class="info-label">Teléfono</div><div class="info-value muted"><i class="bi bi-telephone"></i> {{ reporte.vecino.telefono }}</div></div>
+                        <div class="info-item full"><div class="info-label">Descripción del reclamo</div><div class="info-value muted">{{ reporte.descripcion }}</div></div>
+                        <div class="info-item full"><div class="info-label">Referencia escrita de ubicación</div><div class="info-value muted"><i class="bi bi-geo-alt"></i> {{ reporte.ubicacion }}</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="detail-card">
+                <div class="detail-card-header"><h5><i class="bi bi-crosshair"></i> Ubicación GPS</h5></div>
+                <div class="detail-card-body">
+                    {% if reporte.tiene_gps %}
+                        <div class="gps-panel">
+                            <span class="gps-pill"><i class="bi bi-check-circle"></i> GPS registrado</span>
+                            <div class="gps-coordinate-box"><i class="bi bi-pin-map"></i> {{ reporte.latitud }}, {{ reporte.longitud }}</div>
+                            <a href="{{ reporte.google_maps_url }}" target="_blank" class="gps-link-button w-100 justify-content-center mb-3"><i class="bi bi-map"></i> Abrir en Google Maps</a>
+                            <div class="sigerec-map" data-lat="{{ reporte.latitud|stringformat:'f' }}" data-lng="{{ reporte.longitud|stringformat:'f' }}" data-label="{{ reporte.numero_seguimiento }} - {{ reporte.get_tipo_display }}"></div>
+                            <div class="map-caption"><i class="bi bi-map"></i> Mapa referencial con OpenStreetMap.</div>
+                        </div>
+                    {% else %}
+                        <div class="empty-state-soft"><i class="bi bi-info-circle fs-4 d-block mb-2"></i> Este reclamo no tiene coordenadas GPS registradas.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1 detail-lower-row align-items-start">
+        <div class="col-lg-8">
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h5><i class="bi bi-clock-history"></i> Línea de tiempo operativa</h5>
+                    <span class="text-muted fw-bold small">{{ historial_items|length }} movimiento{% if historial_items|length != 1 %}s{% endif %}</span>
+                </div>
+                <div class="detail-card-body">
+                    <div class="timeline-premium">
+                        <div class="timeline-premium-item">
+                            <div class="timeline-premium-dot"></div>
+                            <div class="timeline-premium-card">
+                                <div class="timeline-premium-title"><i class="bi bi-plus-circle"></i> Reporte registrado</div>
+                                <div class="timeline-premium-date">{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</div>
+                                <div class="timeline-premium-text">El vecino registró el reclamo en SIGEREC y se generó el número de seguimiento {{ reporte.numero_seguimiento }}.</div>
+                            </div>
+                        </div>
+                        {% for item in historial_items %}
+                            <div class="timeline-premium-item">
+                                <div class="timeline-premium-dot"></div>
+                                <div class="timeline-premium-card">
+                                    <div class="timeline-premium-title"><i class="bi bi-arrow-left-right"></i> {{ item.estado_anterior_display }} → {{ item.estado_nuevo_display }}</div>
+                                    <div class="timeline-premium-date">{{ item.fecha_cambio|date:"d/m/Y H:i" }}</div>
+                                    <div class="timeline-premium-text">{% if item.comentario %}{{ item.comentario }}{% else %}Sin comentario adicional registrado.{% endif %}</div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="timeline-premium-item">
+                                <div class="timeline-premium-dot"></div>
+                                <div class="timeline-premium-card">
+                                    <div class="timeline-premium-title"><i class="bi bi-hourglass-split"></i> Sin cambios posteriores</div>
+                                    <div class="timeline-premium-text">El reclamo todavía permanece en su estado inicial.</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="detail-card">
+                <div class="detail-card-header"><h5><i class="bi bi-image"></i> Evidencia</h5></div>
+                <div class="detail-card-body">
+                    {% if reporte.foto and reporte.foto.url %}
+                        <a href="{{ reporte.foto.url }}" target="_blank" class="photo-preview">
+                            <img src="{{ reporte.foto.url }}" alt="Foto del reclamo {{ reporte.numero_seguimiento }}">
+                            <div class="photo-preview-footer"><span><i class="bi bi-arrows-fullscreen"></i> Ver foto completa</span><i class="bi bi-box-arrow-up-right"></i></div>
+                        </a>
+                    {% else %}
+                        <div class="empty-state-soft"><i class="bi bi-camera fs-4 d-block mb-2"></i> Sin fotografía adjunta.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

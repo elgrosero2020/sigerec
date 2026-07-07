@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% block titulo %}Centro de Reportes{% endblock %}
+
+{% block contenido %}
+<div class="page-shell">
+    {% include "components/page_hero.html" with icon="bi-file-earmark-bar-graph" kicker="Módulo institucional" title="Centro de Reportes" subtitle="Genera informes, revisa indicadores y exporta los reclamos del barrio con criterios administrativos." %}
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_filtrado }}</div>
+                <div class="stat-label">Reclamos en el informe</div>
+                <small class="text-muted">Total general: {{ total_general }}</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card warning">
+                <div class="stat-number">{{ pendientes_filtrados }}</div>
+                <div class="stat-label">Pendientes</div>
+                <small class="text-muted">Requieren seguimiento</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card success">
+                <div class="stat-number">{{ porcentaje_resueltos_filtrado }}</div>
+                <div class="stat-label">% Resueltos</div>
+                <small class="text-muted">Según filtros actuales</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">{{ porcentaje_gps_filtrado }}</div>
+                <div class="stat-label">% con GPS</div>
+                <small class="text-muted">{{ con_gps_filtrados }} con ubicación precisa</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card-modern mb-4">
+                <div class="card-header"><i class="bi bi-funnel"></i> Criterios del informe</div>
+                <div class="card-body">
+                    <form method="get" class="d-grid gap-3">
+                        <div>
+                            <label class="form-label">Buscar</label>
+                            <input type="text" name="q" class="form-control" value="{{ filtros.q }}" placeholder="Código, vecino, ubicación o descripción">
+                        </div>
+                        <div>
+                            <label class="form-label">Estado</label>
+                            <select name="estado" class="form-select">
+                                <option value="">Todos los estados</option>
+                                {% for value,label in estados_reporte %}
+                                    <option value="{{ value }}" {% if filtros.estado == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Tipo de problema</label>
+                            <select name="tipo" class="form-select">
+                                <option value="">Todos los tipos</option>
+                                {% for value,label in tipos_reporte %}
+                                    <option value="{{ value }}" {% if filtros.tipo == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Ubicación GPS</label>
+                            <select name="gps" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="con_gps" {% if filtros.gps == 'con_gps' %}selected{% endif %}>Solo con GPS</option>
+                                <option value="sin_gps" {% if filtros.gps == 'sin_gps' %}selected{% endif %}>Solo sin GPS</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom"><i class="bi bi-search"></i> Generar vista</button>
+                        {% if filtros_activos %}
+                            <a href="{% url 'centro_reportes' %}" class="btn btn-outline-custom text-center"><i class="bi bi-x-circle"></i> Limpiar filtros</a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+
+            <div class="card-modern">
+                <div class="card-header"><i class="bi bi-download"></i> Exportaciones</div>
+                <div class="card-body">
+                    <p class="text-muted small fw-semibold">La exportación respeta los filtros seleccionados en esta pantalla.</p>
+                    <a href="{% url 'exportar_reportes_csv' %}?{{ request.GET.urlencode }}" class="btn btn-accent-custom w-100 mb-2">
+                        <i class="bi bi-filetype-csv"></i> Exportar CSV para Excel
+                    </a>
+                    <a href="{% url 'exportar_reportes_excel' %}?{{ request.GET.urlencode }}" class="btn btn-outline-custom w-100">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel institucional
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card-modern mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-clipboard-data"></i> Resumen del informe</span>
+                    {% if filtros_activos %}<span class="badge bg-light text-dark">Filtros activos</span>{% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-black mb-3" style="font-weight:900;color:var(--primary);">Por estado</h6>
+                            {% if resumen_por_estado %}
+                                {% for item in resumen_por_estado %}
+                                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                        <span class="fw-bold">{{ item.estado|title }}</span>
+                                        <span class="badge rounded-pill bg-light text-dark">{{ item.total }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted mb-0">No hay datos para estos filtros.</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-black mb-3" style="font-weight:900;color:var(--primary);">Por tipo</h6>
+                            {% if resumen_por_tipo %}
+                                {% for item in resumen_por_tipo %}
+                                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                        <span class="fw-bold">{{ item.tipo|title }}</span>
+                                        <span class="badge rounded-pill bg-light text-dark">{{ item.total }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted mb-0">No hay datos para estos filtros.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-modern">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-table"></i> Vista previa</span>
+                    <span class="small opacity-75">Primeros 10 registros</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-modern mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Tipo</th>
+                                    <th>Estado</th>
+                                    <th>Ubicación</th>
+                                    <th>GPS</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reporte in reportes_preview %}
+                                    <tr>
+                                        <td><a href="{% url 'detalle_reporte' reporte.numero_seguimiento %}">{{ reporte.numero_seguimiento }}</a></td>
+                                        <td>{{ reporte.get_tipo_display }}</td>
+                                        <td><span class="badge-estado badge-{{ reporte.estado }}"><span class="estado-dot"></span>{{ reporte.get_estado_display }}</span></td>
+                                        <td>{{ reporte.ubicacion|truncatechars:38 }}</td>
+                                        <td>
+                                            {% if reporte.latitud and reporte.longitud %}
+                                                <span class="gps-pill"><i class="bi bi-geo-alt"></i> Sí</span>
+                                            {% else %}
+                                                <span class="text-muted small fw-bold">No</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr><td colspan="6" class="p-4">
+                                            {% include "components/empty_state.html" with icon="bi-search" title="Sin resultados para exportar" message="No hay reportes que coincidan con los criterios seleccionados. Ajusta los filtros para generar una nueva vista o limpia la búsqueda actual." %}
+                                        </td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

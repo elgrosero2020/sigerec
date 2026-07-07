@@ -1,0 +1,92 @@
+{% load static %}
+<header class="sigerec-institutional-header sticky-top">
+    <div class="sigerec-topbar">
+        <div class="container sigerec-topbar-inner">
+            <span><i class="bi bi-geo-alt-fill"></i> Trinidad, Beni - Bolivia</span>
+            <span class="d-none d-md-inline"><i class="bi bi-building-check"></i> Plataforma de gestión ciudadana</span>
+            {% if user.is_authenticated %}
+                <span class="sigerec-session-status"><i class="bi bi-circle-fill"></i> Sesión activa</span>
+            {% else %}
+                <span><i class="bi bi-shield-lock"></i> Acceso ciudadano</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg sigerec-mainnav">
+        <div class="container">
+            <a class="sigerec-brand" href="/" aria-label="Ir al inicio de SIGEREC">
+                <span class="sigerec-brand-logo">
+                    <img src="{% static 'images/logo.png' %}" alt="Logo SIGEREC">
+                </span>
+                <span class="sigerec-brand-copy">
+                    <strong>SIGEREC</strong>
+                    <small>Sistema de Gestión de Reclamos Ciudadanos</small>
+                </span>
+            </a>
+
+            <button class="navbar-toggler sigerec-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sigerecNavbar" aria-controls="sigerecNavbar" aria-expanded="false" aria-label="Abrir menú de navegación">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="sigerecNavbar">
+                <ul class="navbar-nav ms-auto align-items-lg-center sigerec-nav-list">
+                    <li class="nav-item">
+                        <a class="sigerec-nav-link {% if request.path == '/' %}active{% endif %}" href="/">
+                            <i class="bi bi-house-door"></i><span>Inicio</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="sigerec-nav-link {% if '/reportar/' in request.path %}active{% endif %}" href="/reportar/">
+                            <i class="bi bi-plus-circle"></i><span>Reportar</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="sigerec-nav-link {% if '/consultar/' in request.path %}active{% endif %}" href="/consultar/">
+                            <i class="bi bi-search"></i><span>Consultar</span>
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="sigerec-nav-link {% if '/dashboard/' in request.path %}active{% endif %}" href="/dashboard/">
+                                <i class="bi bi-speedometer2"></i><span>Panel</span>
+                            </a>
+                        </li>
+                        {% if user.vecino.rol == 'presidente' %}
+                            <li class="nav-item">
+                                <a class="sigerec-nav-link {% if '/reportes/' in request.path %}active{% endif %}" href="/reportes/">
+                                    <i class="bi bi-file-earmark-bar-graph"></i><span>Centro de Reportes</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item dropdown">
+                            <a class="sigerec-user-pill dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="sigerec-user-avatar"><i class="bi bi-person"></i></span>
+                                <span class="sigerec-user-copy">
+                                    <strong>{{ user.first_name|default:user.username }}</strong>
+                                    <small>{% if user.vecino.rol == 'presidente' %}Presidente Junta Vecinal{% else %}Vecino registrado{% endif %}</small>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end sigerec-user-menu">
+                                <li><h6 class="dropdown-header">Cuenta SIGEREC</h6></li>
+                                <li><a class="dropdown-item" href="/dashboard/"><i class="bi bi-grid me-2"></i>Ir a mi panel</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/logout/"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="sigerec-nav-link {% if '/registro/' in request.path %}active{% endif %}" href="/registro/">
+                                <i class="bi bi-person-plus"></i><span>Registro</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="sigerec-login-btn {% if '/login/' in request.path %}active{% endif %}" href="/login/">
+                                <i class="bi bi-box-arrow-in-right"></i><span>Ingresar</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

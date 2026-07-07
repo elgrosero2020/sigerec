@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block titulo %}Registro de Vecino{% endblock %}
+{% block contenido %}
+<style>
+.form-layout{max-width:1180px;margin:0 auto}.form-hero-card{background:linear-gradient(135deg,#1A4A3A,#3A5F7A);color:white;border-radius:26px;padding:34px;box-shadow:0 24px 70px rgba(15,23,42,.16)}.form-step{display:flex;gap:.9rem;margin-top:1rem;color:rgba(255,255,255,.88)}.form-step span{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);font-weight:900;flex:0 0 auto}.premium-form-card{background:white;border:1px solid #e9eef2;border-radius:24px;box-shadow:0 20px 55px rgba(15,23,42,.10);padding:30px}.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.quality-note{background:#f7faf9;border:1px solid #e6efec;border-radius:16px;padding:14px;color:#607080;font-size:.92rem}@media(max-width:768px){.field-grid{grid-template-columns:1fr}.form-hero-card,.premium-form-card{padding:24px}}
+</style>
+<div class="page-shell">
+    <div class="form-layout">
+        <div class="row g-4 align-items-stretch">
+            <div class="col-lg-5">
+                <div class="form-hero-card h-100">
+                    <span class="badge rounded-pill text-bg-light text-success mb-3"><i class="bi bi-person-plus"></i> Registro ciudadano</span>
+                    <h2 class="fw-black mb-3" style="font-weight:900;letter-spacing:-.03em;">Crea tu cuenta vecinal en SIGEREC.</h2>
+                    <p style="color:rgba(255,255,255,.82);">Tu cuenta permite registrar reclamos urbanos, consultar el avance y mantener trazabilidad del seguimiento.</p>
+                    <div class="form-step"><span>1</span><div><strong>Datos personales</strong><br><small>Nombre, CI y teléfono para identificar al vecino.</small></div></div>
+                    <div class="form-step"><span>2</span><div><strong>Ubicación barrial</strong><br><small>Dirección y barrio para clasificar reclamos correctamente.</small></div></div>
+                    <div class="form-step"><span>3</span><div><strong>Acceso seguro</strong><br><small>Contraseña para ingresar al panel ciudadano.</small></div></div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="premium-form-card h-100">
+                    <div class="mb-4">
+                        <h2 class="section-title mb-1">Registro de vecino</h2>
+                        <p class="section-subtitle mb-0">Completa los datos con información real y clara.</p>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle"></i> Por favor corrige los siguientes problemas:
+                                <ul class="mb-0 mt-2">
+                                    {% for field, errors in form.errors.items %}{% for error in errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        <div class="field-grid">
+                            <div class="mb-3"><label for="id_nombre" class="form-label">Nombre completo</label>{{ form.nombre }}{% if form.nombre.errors %}<div class="text-danger small">{{ form.nombre.errors }}</div>{% endif %}</div>
+                            <div class="mb-3"><label for="id_ci" class="form-label">Carnet de Identidad</label>{{ form.ci }}{% if form.ci.errors %}<div class="text-danger small">{{ form.ci.errors }}</div>{% endif %}</div>
+                        </div>
+                        <div class="field-grid">
+                            <div class="mb-3"><label for="id_telefono" class="form-label">Teléfono</label>{{ form.telefono }}{% if form.telefono.errors %}<div class="text-danger small">{{ form.telefono.errors }}</div>{% endif %}</div>
+                            <div class="mb-3"><label for="id_barrio" class="form-label">Barrio</label>{{ form.barrio }}{% if form.barrio.errors %}<div class="text-danger small">{{ form.barrio.errors }}</div>{% endif %}</div>
+                        </div>
+                        <div class="mb-3"><label for="id_direccion" class="form-label">Dirección</label>{{ form.direccion }}{% if form.direccion.errors %}<div class="text-danger small">{{ form.direccion.errors }}</div>{% endif %}</div>
+                        <div class="field-grid">
+                            <div class="mb-3"><label for="id_password" class="form-label">Contraseña</label>{{ form.password }}{% if form.password.errors %}<div class="text-danger small">{{ form.password.errors }}</div>{% endif %}</div>
+                            <div class="mb-3"><label for="id_password_confirm" class="form-label">Confirmar contraseña</label>{{ form.password_confirm }}{% if form.password_confirm.errors %}<div class="text-danger small">{{ form.password_confirm.errors }}</div>{% endif %}</div>
+                        </div>
+                        <div class="quality-note mb-4"><i class="bi bi-shield-check"></i> Tu CI será usado como usuario para iniciar sesión.</div>
+                        <div class="d-grid d-md-flex gap-2 justify-content-md-end">
+                            <a href="/" class="btn btn-outline-custom"><i class="bi bi-arrow-left"></i> Volver</a>
+                            <button type="submit" class="btn btn-primary-custom"><i class="bi bi-person-check"></i> Crear cuenta</button>
+                        </div>
+                    </form>
+                    <p class="text-muted text-center mt-4 mb-0">¿Ya tienes cuenta? <a href="/login/" class="fw-bold">Iniciar sesión</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

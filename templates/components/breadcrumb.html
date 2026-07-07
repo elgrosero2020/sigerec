@@ -1,0 +1,18 @@
+{% if request.path != '/' %}
+<nav class="sigerec-breadcrumb-wrap" aria-label="Ruta de navegación">
+    <div class="sigerec-breadcrumb">
+        <a href="/"><i class="bi bi-house-door"></i> Inicio</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>
+            {% if '/reportar/' in request.path %}Reportar reclamo
+            {% elif '/consultar/' in request.path %}Consultar reclamo
+            {% elif '/dashboard/' in request.path %}Panel institucional
+            {% elif '/reportes/' in request.path %}Centro de Reportes
+            {% elif '/registro/' in request.path %}Registro ciudadano
+            {% elif '/login/' in request.path %}Ingreso al sistema
+            {% elif '/detalle/' in request.path %}Ficha del reclamo
+            {% else %}SIGEREC{% endif %}
+        </span>
+    </div>
+</nav>
+{% endif %}

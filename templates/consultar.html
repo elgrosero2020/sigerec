@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+{% block titulo %}Consultar Reclamo{% endblock %}
+{% block contenido %}
+<style>
+    .consulta-search-card {
+        margin-top: 0;
+        position: relative;
+        z-index: 2;
+    }
+    .consulta-search-card .card-modern {
+        border-radius: 26px;
+    }
+    .consulta-helper-card {
+        background: linear-gradient(135deg, rgba(26,74,58,.98), rgba(58,95,122,.94));
+        color: #fff;
+        border-radius: 28px;
+        padding: 1.6rem;
+        box-shadow: 0 18px 45px rgba(26,74,58,.18);
+        height: 100%;
+    }
+    .consulta-helper-card p,
+    .consulta-helper-card small { color: rgba(255,255,255,.82); }
+    .consulta-helper-item {
+        display: flex;
+        gap: .85rem;
+        align-items: flex-start;
+        padding: .75rem 0;
+        border-bottom: 1px solid rgba(255,255,255,.13);
+    }
+    .consulta-helper-item:last-child { border-bottom: 0; }
+    .consulta-helper-item i { font-size: 1.25rem; color: #dff7eb; }
+    .consulta-code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        letter-spacing: .08em;
+        background: rgba(26,74,58,.08);
+        color: var(--primary);
+        border: 1px solid rgba(26,74,58,.14);
+        padding: .45rem .75rem;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        font-weight: 800;
+    }
+    .consulta-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+    }
+    .consulta-summary-item {
+        background: #f8fafc;
+        border: 1px solid rgba(15,23,42,.08);
+        border-radius: 18px;
+        padding: 1rem;
+        height: 100%;
+    }
+    .consulta-summary-label {
+        color: #64748b;
+        font-size: .78rem;
+        text-transform: uppercase;
+        font-weight: 800;
+        letter-spacing: .05em;
+        margin-bottom: .35rem;
+    }
+    .consulta-summary-value {
+        color: #0f172a;
+        font-weight: 800;
+        margin: 0;
+    }
+    .status-roadmap {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: .65rem;
+        margin-top: 1.3rem;
+    }
+    .roadmap-step {
+        border-radius: 16px;
+        padding: .8rem .55rem;
+        text-align: center;
+        background: #f1f5f9;
+        color: #64748b;
+        border: 1px solid rgba(15,23,42,.08);
+        font-size: .78rem;
+        font-weight: 800;
+    }
+    .roadmap-step.active {
+        background: rgba(26,74,58,.1);
+        color: var(--primary);
+        border-color: rgba(26,74,58,.22);
+        box-shadow: 0 10px 24px rgba(26,74,58,.08);
+    }
+    .roadmap-step i {
+        display: block;
+        font-size: 1.2rem;
+        margin-bottom: .25rem;
+    }
+    .evidence-box {
+        border: 1px solid rgba(15,23,42,.08);
+        background: #fff;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(15,23,42,.06);
+    }
+    .evidence-preview {
+        background: #f8fafc;
+        padding: 1rem;
+    }
+    .evidence-preview img {
+        width: 100%;
+        max-height: 320px;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 1px solid rgba(15,23,42,.08);
+    }
+    .consulta-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .65rem;
+    }
+    .empty-evidence {
+        min-height: 140px;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        color: #64748b;
+        background: #f8fafc;
+        border-radius: 16px;
+        border: 1px dashed rgba(100,116,139,.35);
+    }
+    @media (max-width: 768px) {
+        .consulta-summary-grid { grid-template-columns: 1fr; }
+        .status-roadmap { grid-template-columns: 1fr; }
+        .consulta-search-card { margin-top: 0; }
+    }
+</style>
+
+<div class="app-page">
+    <section class="page-hero-compact">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8 position-relative" style="z-index: 1;">
+                <span class="badge bg-light text-dark mb-3" style="border-radius: 999px;"><i class="bi bi-search"></i> Seguimiento ciudadano</span>
+                <h2 class="fw-black mb-2">Consulta el estado de tu reclamo</h2>
+                <p class="mb-0" style="max-width: 680px; opacity: .9;">Ingresa el número de seguimiento para verificar el avance, ubicación, evidencia y cambios realizados por la junta vecinal.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end position-relative" style="z-index: 1;">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-2 bg-white bg-opacity-10 rounded-pill">
+                    <i class="bi bi-shield-check"></i>
+                    <span class="fw-bold">Consulta pública y segura</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4 align-items-start consulta-search-card">
+        <div class="col-lg-4">
+            <div class="consulta-helper-card">
+                <span class="badge rounded-pill text-bg-light text-success mb-3"><i class="bi bi-shield-check"></i> Consulta pública</span>
+                <h2 class="fw-black mb-3" style="font-weight:900;letter-spacing:-.035em;">Verifica el avance de un reclamo.</h2>
+                <p>Usa el número de seguimiento generado al registrar el reclamo para revisar su estado, ubicación y movimientos.</p>
+                <div class="consulta-helper-item"><i class="bi bi-upc-scan"></i><div><strong>Ingresa el código</strong><br><small>Ejemplo: REC-0001.</small></div></div>
+                <div class="consulta-helper-item"><i class="bi bi-map"></i><div><strong>Revisa la ubicación</strong><br><small>Si existe GPS, puedes abrir el punto en Maps.</small></div></div>
+                <div class="consulta-helper-item"><i class="bi bi-clock-history"></i><div><strong>Sigue el historial</strong><br><small>Consulta los cambios realizados por la junta vecinal.</small></div></div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card-modern mb-4">
+                <div class="card-header"><i class="bi bi-upc-scan"></i> Buscar por número de seguimiento</div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-2 align-items-stretch">
+                            <div class="col-md-9">
+                                <input type="text" name="numero_seguimiento" class="form-control-modern h-100" placeholder="Ej: REC-0001" required value="{% if request.POST.numero_seguimiento %}{{ request.POST.numero_seguimiento }}{% endif %}">
+                            </div>
+                            <div class="col-md-3 d-grid">
+                                <button type="submit" class="btn btn-primary-custom"><i class="bi bi-search"></i> Consultar</button>
+                            </div>
+                        </div>
+                        <div class="form-text mt-2"><i class="bi bi-info-circle"></i> El código se genera automáticamente al registrar un reclamo.</div>
+                    </form>
+                </div>
+            </div>
+
+            {% if reporte %}
+            <div class="card-modern mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+                        <div>
+                            <div class="consulta-code mb-3"><i class="bi bi-hash"></i> {{ reporte.numero_seguimiento }}</div>
+                            <h3 class="fw-black mb-1">{{ reporte.get_tipo_display }}</h3>
+                            <p class="text-muted mb-0">Registrado el {{ reporte.fecha_creacion|date:"d/m/Y" }} a horas {{ reporte.fecha_creacion|date:"H:i" }}</p>
+                        </div>
+                        <div class="text-md-end">
+                            <span class="badge badge-estado {% if reporte.estado == 'reportado' %}badge-reportado{% elif reporte.estado == 'validado' %}badge-validado{% elif reporte.estado == 'derivado' %}badge-derivado{% elif reporte.estado == 'proceso' %}badge-proceso{% elif reporte.estado == 'resuelto' %}badge-resuelto{% endif %}">{{ reporte.get_estado_display }}</span>
+                            <div class="mt-2">
+                                <a href="{% url 'detalle_reporte' reporte.numero_seguimiento %}" class="btn btn-sm btn-outline-success" style="border-radius: 999px;"><i class="bi bi-file-earmark-richtext"></i> Ver ficha completa</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="status-roadmap">
+                        <div class="roadmap-step active"><i class="bi bi-megaphone"></i> Reportado</div>
+                        <div class="roadmap-step {% if reporte.estado == 'validado' or reporte.estado == 'derivado' or reporte.estado == 'proceso' or reporte.estado == 'resuelto' %}active{% endif %}"><i class="bi bi-check2-circle"></i> Validado</div>
+                        <div class="roadmap-step {% if reporte.estado == 'derivado' or reporte.estado == 'proceso' or reporte.estado == 'resuelto' %}active{% endif %}"><i class="bi bi-send-check"></i> Derivado</div>
+                        <div class="roadmap-step {% if reporte.estado == 'proceso' or reporte.estado == 'resuelto' %}active{% endif %}"><i class="bi bi-tools"></i> En proceso</div>
+                        <div class="roadmap-step {% if reporte.estado == 'resuelto' %}active{% endif %}"><i class="bi bi-patch-check"></i> Resuelto</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="card-modern h-100">
+                        <div class="card-header"><i class="bi bi-card-text"></i> Información del reclamo</div>
+                        <div class="card-body">
+                            <div class="consulta-summary-grid mb-4">
+                                <div class="consulta-summary-item">
+                                    <div class="consulta-summary-label">Tipo</div>
+                                    <p class="consulta-summary-value">{{ reporte.get_tipo_display }}</p>
+                                </div>
+                                <div class="consulta-summary-item">
+                                    <div class="consulta-summary-label">Estado</div>
+                                    <p class="consulta-summary-value">{{ reporte.get_estado_display }}</p>
+                                </div>
+                                <div class="consulta-summary-item">
+                                    <div class="consulta-summary-label">Actualizado</div>
+                                    <p class="consulta-summary-value">{{ reporte.fecha_actualizacion|date:"d/m/Y" }}</p>
+                                </div>
+                            </div>
+
+                            <h6 class="fw-bold mb-2" style="color: var(--primary);"><i class="bi bi-chat-square-text"></i> Descripción ciudadana</h6>
+                            <p class="text-muted mb-4">{{ reporte.descripcion }}</p>
+
+                            <h6 class="fw-bold mb-2" style="color: var(--primary);"><i class="bi bi-geo-alt"></i> Ubicación declarada</h6>
+                            <div class="gps-panel">
+                                <div class="location-reference mb-2"><i class="bi bi-signpost-2"></i> {{ reporte.ubicacion }}</div>
+                                {% if reporte.tiene_gps %}
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                        <span class="gps-pill"><i class="bi bi-crosshair"></i> GPS registrado</span>
+                                        <a href="{{ reporte.google_maps_url }}" target="_blank" class="gps-link-button"><i class="bi bi-map"></i> Abrir en Google Maps</a>
+                                    </div>
+                                    <div class="gps-coordinates mt-2">Coordenadas: {{ reporte.latitud }}, {{ reporte.longitud }}</div>
+                                    <div class="sigerec-map mt-3" data-lat="{{ reporte.latitud|stringformat:'f' }}" data-lng="{{ reporte.longitud|stringformat:'f' }}" data-label="{{ reporte.numero_seguimiento }} - {{ reporte.get_tipo_display }}"></div>
+                                    <div class="map-caption"><i class="bi bi-map"></i> Mapa referencial generado con OpenStreetMap.</div>
+                                {% else %}
+                                    <div class="alert alert-light border mb-0"><i class="bi bi-info-circle"></i> Este reclamo no tiene coordenadas GPS registradas.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="evidence-box h-100">
+                        <div class="card-header"><i class="bi bi-camera"></i> Evidencia fotográfica</div>
+                        <div class="evidence-preview">
+                            {% if reporte.foto and reporte.foto.url %}
+                                <img src="{{ reporte.foto.url }}" alt="Evidencia del reclamo {{ reporte.numero_seguimiento }}">
+                                <div class="consulta-actions mt-3">
+                                    <a href="{{ reporte.foto.url }}" target="_blank" class="btn btn-sm btn-outline-success" style="border-radius: 999px;"><i class="bi bi-arrows-fullscreen"></i> Ver imagen completa</a>
+                                </div>
+                            {% else %}
+                                <div class="empty-evidence">
+                                    <div>
+                                        <i class="bi bi-image" style="font-size: 2rem;"></i>
+                                        <p class="fw-bold mb-1 mt-2">Sin imagen adjunta</p>
+                                        <p class="small mb-0">El reclamo fue registrado sin fotografía.</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-modern mt-4">
+                <div class="card-header"><i class="bi bi-clock-history"></i> Historial de seguimiento</div>
+                <div class="card-body">
+                    {% if historial_items %}
+                        <div class="timeline-box">
+                            {% for item in historial_items %}
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-content">
+                                        <div class="fw-bold">{{ item.estado_anterior_display }} → {{ item.estado_nuevo_display }}</div>
+                                        <div class="text-muted small"><i class="bi bi-calendar-event"></i> {{ item.fecha_cambio|date:"d/m/Y H:i" }}</div>
+                                        {% if item.comentario %}<div class="mt-2">{{ item.comentario }}</div>{% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-light border mb-0"><i class="bi bi-info-circle"></i> Este reclamo todavía no tiene cambios de estado registrados.</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
