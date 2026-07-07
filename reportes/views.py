@@ -759,3 +759,223 @@ def cambiar_estado(request, reporte_id):
             messages.error(request, 'Estado no válido')
     
     return redirect('dashboard')
+
+
+@login_required(login_url='/login/')
+def exportar_reportes_pdf(request):
+    """Genera un informe institucional PDF de reclamos del barrio del presidente."""
+    try:
+        vecino = request.user.vecino
+    except Vecino.DoesNotExist:
+        messages.error(request, 'No tienes un perfil de vecino asociado.')
+        return redirect('inicio')
+
+    if vecino.rol != 'presidente':
+        messages.error(request, 'No tienes permiso para exportar reportes.')
+        return redirect('dashboard')
+
+    try:
+        from io import BytesIO
+        from pathlib import Path
+        from django.conf import settings
+        from reportlab.lib import colors
+        from reportlab.lib.enums import TA_CENTER, TA_LEFT
+        from reportlab.lib.pagesizes import A4, landscape
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.units import cm
+        from reportlab.platypus import (
+            SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
+            Image, PageBreak
+        )
+    except ImportError:
+        messages.error(request, 'Falta instalar ReportLab. Ejecuta: pip install reportlab')
+        return redirect('centro_reportes')
+
+    _, reportes_filtrados, filtros = _filtrar_reportes_presidente(request, vecino)
+    reportes = list(reportes_filtrados.select_related('vecino').order_by('-fecha_creacion'))
+
+    total = len(reportes)
+    pendientes = sum(1 for r in reportes if r.estado != 'resuelto')
+    resueltos = sum(1 for r in reportes if r.estado == 'resuelto')
+    con_gps = sum(1 for r in reportes if r.latitud is not None and r.longitud is not None)
+    porcentaje_resueltos = round((resueltos / total) * 100) if total else 0
+    porcentaje_gps = round((con_gps / total) * 100) if total else 0
+
+    buffer = BytesIO()
+    fecha_archivo = timezone.localtime(timezone.now()).strftime('%Y-%m-%d_%H-%M')
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=landscape(A4),
+        rightMargin=1.2 * cm,
+        leftMargin=1.2 * cm,
+        topMargin=1.0 * cm,
+        bottomMargin=1.0 * cm,
+        title='Informe Institucional SIGEREC',
+        author='SIGEREC',
+    )
+
+    styles = getSampleStyleSheet()
+    primary = colors.HexColor('#123D32')
+    secondary = colors.HexColor('#2E7D5B')
+    accent = colors.HexColor('#2D79C7')
+    soft_bg = colors.HexColor('#F4F7FA')
+    border = colors.HexColor('#D9E2EC')
+    text_color = colors.HexColor('#183247')
+
+    title_style = ParagraphStyle(
+        'SIGERECTitle', parent=styles['Title'], alignment=TA_CENTER,
+        fontSize=18, leading=22, textColor=primary, spaceAfter=8
+    )
+    subtitle_style = ParagraphStyle(
+        'SIGERECSubtitle', parent=styles['Normal'], alignment=TA_CENTER,
+        fontSize=10, leading=14, textColor=text_color, spaceAfter=12
+    )
+    section_style = ParagraphStyle(
+        'SIGERECSection', parent=styles['Heading2'], fontSize=12,
+        leading=15, textColor=primary, spaceBefore=10, spaceAfter=6
+    )
+    normal_style = ParagraphStyle(
+        'SIGERECNormal', parent=styles['Normal'], fontSize=8.2,
+        leading=10.5, textColor=text_color
+    )
+    small_style = ParagraphStyle(
+        'SIGERECSmall', parent=styles['Normal'], fontSize=7.2,
+        leading=9, textColor=text_color
+    )
+
+    elements = []
+
+    logo_path = Path(settings.BASE_DIR) / 'static' / 'images' / 'logo.png'
+    if logo_path.exists():
+        try:
+            logo = Image(str(logo_path), width=3.0*cm, height=1.1*cm)
+            logo.hAlign = 'CENTER'
+            elements.append(logo)
+            elements.append(Spacer(1, 0.15*cm))
+        except Exception:
+            pass
+
+    elements.append(Paragraph('GOBIERNO AUTÓNOMO MUNICIPAL DE TRINIDAD', title_style))
+    elements.append(Paragraph('SIGEREC — Sistema de Gestión de Reclamos Ciudadanos', subtitle_style))
+    elements.append(Paragraph('Informe Institucional de Reclamos Ciudadanos', title_style))
+
+    ahora = timezone.localtime(timezone.now())
+    datos = [
+        ['Fecha de generación', ahora.strftime('%d/%m/%Y')],
+        ['Hora de generación', ahora.strftime('%H:%M')],
+        ['Responsable', vecino.nombre],
+        ['Barrio gestionado', vecino.barrio],
+    ]
+    filtros_legibles = []
+    if filtros.get('q'):
+        filtros_legibles.append(['Búsqueda', filtros['q']])
+    if filtros.get('estado'):
+        filtros_legibles.append(['Estado', dict(Reporte.ESTADOS).get(filtros['estado'], filtros['estado'])])
+    if filtros.get('tipo'):
+        filtros_legibles.append(['Tipo', dict(Reporte.TIPOS).get(filtros['tipo'], filtros['tipo'])])
+    if filtros.get('gps'):
+        filtros_legibles.append(['GPS', 'Solo con GPS' if filtros['gps'] == 'con_gps' else 'Solo sin GPS'])
+    if not filtros_legibles:
+        filtros_legibles.append(['Filtros', 'Sin filtros aplicados'])
+
+    info_table = Table(
+        [[Paragraph('<b>Datos del informe</b>', normal_style), '', Paragraph('<b>Filtros aplicados</b>', normal_style), '']] +
+        [[Paragraph(k, small_style), Paragraph(str(v), small_style), Paragraph(filtros_legibles[i][0], small_style) if i < len(filtros_legibles) else '', Paragraph(str(filtros_legibles[i][1]), small_style) if i < len(filtros_legibles) else ''] for i, (k, v) in enumerate(datos)],
+        colWidths=[4.0*cm, 6.0*cm, 4.0*cm, 10.0*cm]
+    )
+    info_table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), soft_bg),
+        ('TEXTCOLOR', (0,0), (-1,-1), text_color),
+        ('GRID', (0,0), (-1,-1), 0.35, border),
+        ('SPAN', (0,0), (1,0)),
+        ('SPAN', (2,0), (3,0)),
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('LEFTPADDING', (0,0), (-1,-1), 6),
+        ('RIGHTPADDING', (0,0), (-1,-1), 6),
+        ('TOPPADDING', (0,0), (-1,-1), 5),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+    ]))
+    elements.append(info_table)
+    elements.append(Spacer(1, 0.35*cm))
+
+    elements.append(Paragraph('Resumen ejecutivo', section_style))
+    summary_data = [
+        ['Total', 'Pendientes', 'Resueltos', 'Con GPS', '% Resueltos', '% GPS'],
+        [str(total), str(pendientes), str(resueltos), str(con_gps), f'{porcentaje_resueltos}%', f'{porcentaje_gps}%'],
+    ]
+    summary_table = Table(summary_data, colWidths=[4.1*cm]*6)
+    summary_table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), primary),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+        ('BACKGROUND', (0,1), (-1,1), soft_bg),
+        ('TEXTCOLOR', (0,1), (-1,1), text_color),
+        ('FONTNAME', (0,0), (-1,-1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0,0), (-1,0), 8),
+        ('FONTSIZE', (0,1), (-1,1), 14),
+        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+        ('GRID', (0,0), (-1,-1), 0.35, border),
+        ('TOPPADDING', (0,0), (-1,-1), 7),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 7),
+    ]))
+    elements.append(summary_table)
+    elements.append(Spacer(1, 0.35*cm))
+
+    elements.append(Paragraph('Detalle de reclamos', section_style))
+    table_data = [[
+        'Código', 'Vecino', 'Barrio', 'Tipo', 'Estado', 'Ubicación', 'GPS', 'Fecha'
+    ]]
+
+    for r in reportes:
+        gps = 'Sí' if r.latitud is not None and r.longitud is not None else 'No'
+        table_data.append([
+            Paragraph(r.numero_seguimiento, small_style),
+            Paragraph(r.vecino.nombre, small_style),
+            Paragraph(r.vecino.barrio, small_style),
+            Paragraph(r.get_tipo_display(), small_style),
+            Paragraph(r.get_estado_display(), small_style),
+            Paragraph((r.ubicacion or '')[:85], small_style),
+            Paragraph(gps, small_style),
+            Paragraph(timezone.localtime(r.fecha_creacion).strftime('%d/%m/%Y'), small_style),
+        ])
+
+    if len(table_data) == 1:
+        table_data.append([Paragraph('No existen reclamos para los filtros aplicados.', normal_style), '', '', '', '', '', '', ''])
+
+    detail_table = Table(table_data, repeatRows=1, colWidths=[2.7*cm, 4.0*cm, 3.3*cm, 2.7*cm, 2.8*cm, 7.2*cm, 1.3*cm, 2.3*cm])
+    style_cmds = [
+        ('BACKGROUND', (0,0), (-1,0), secondary),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0,0), (-1,0), 7.5),
+        ('ALIGN', (0,0), (-1,0), 'CENTER'),
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('GRID', (0,0), (-1,-1), 0.25, border),
+        ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, soft_bg]),
+        ('LEFTPADDING', (0,0), (-1,-1), 4),
+        ('RIGHTPADDING', (0,0), (-1,-1), 4),
+        ('TOPPADDING', (0,0), (-1,-1), 4),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+    ]
+    if len(table_data) == 2 and total == 0:
+        style_cmds.append(('SPAN', (0,1), (-1,1)))
+        style_cmds.append(('ALIGN', (0,1), (-1,1), 'CENTER'))
+    detail_table.setStyle(TableStyle(style_cmds))
+    elements.append(detail_table)
+
+    elements.append(Spacer(1, 0.4*cm))
+    elements.append(Paragraph('Documento generado automáticamente por SIGEREC. Proyecto de extensión universitaria — Universidad Autónoma del Beni “José Ballivián”.', subtitle_style))
+
+    def footer(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Helvetica', 7)
+        canvas.setFillColor(text_color)
+        canvas.drawString(1.2*cm, 0.55*cm, 'SIGEREC · Sistema de Gestión de Reclamos Ciudadanos')
+        canvas.drawRightString(28.5*cm, 0.55*cm, f'Página {doc.page}')
+        canvas.restoreState()
+
+    doc.build(elements, onFirstPage=footer, onLaterPages=footer)
+    buffer.seek(0)
+
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="SIGEREC_informe_{fecha_archivo}.pdf"'
+    return response

@@ -90,6 +90,9 @@
                     <a href="{% url 'exportar_reportes_excel' %}?{{ request.GET.urlencode }}" class="btn btn-outline-custom w-100" data-sigerec-loading data-sigerec-download="true" data-loader-message="Generando informe institucional Excel...">
                         <i class="bi bi-file-earmark-excel"></i> Exportar Excel institucional
                     </a>
+                    <a href="{% url 'exportar_reportes_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-primary-custom w-100 mt-2" data-sigerec-loading data-sigerec-download="true" data-loader-message="Generando informe institucional PDF...">
+                        <i class="bi bi-file-earmark-pdf"></i> Exportar PDF institucional
+                    </a>
                     <div class="sigerec-export-hint"><i class="bi bi-info-circle"></i> La descarga respeta los filtros seleccionados.</div>
                 </div>
             </div>

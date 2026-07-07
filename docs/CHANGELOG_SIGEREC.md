@@ -70,3 +70,16 @@ Esta versión no toca modelos, base de datos, migraciones ni lógica crítica. E
 - `docs/CHANGELOG_SIGEREC.md`
 
 **Riesgo:** bajo. No modifica modelos, migraciones ni base de datos.
+## RC1-06 — PDF Institucional Premium
+
+- Se agrega exportación PDF desde el Centro de Reportes.
+- El PDF respeta filtros activos del módulo de reportes.
+- Incluye encabezado institucional, datos del informe, resumen ejecutivo, tabla de reclamos y pie de página.
+- Se agrega ReportLab como dependencia del proyecto.
+
+Archivos modificados:
+- reportes/views.py
+- sigerec/urls.py
+- templates/centro_reportes.html
+- requirements.txt
+
