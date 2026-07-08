@@ -1,8 +1,12 @@
 asgiref==3.11.1
+charset-normalizer==3.4.8
 Django==6.0.6
 et_xmlfile==2.0.0
+gunicorn==26.0.0
 openpyxl==3.1.5
+packaging==26.2
 pillow==11.3.0
+reportlab==5.0.0
 sqlparse==0.5.5
 tzdata==2026.2
-reportlab==4.4.5
+whitenoise==6.12.0
