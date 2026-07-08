@@ -9,6 +9,9 @@
 .sigerec-brand{display:inline-flex;align-items:center;gap:.85rem;text-decoration:none;color:#fff!important;min-width:0;} 
 .sigerec-brand-logo{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 24px rgba(0,0,0,.16);overflow:hidden;flex:0 0 auto;} 
 .sigerec-brand-logo img{width:100%;height:100%;object-fit:contain;padding:.18rem;filter:drop-shadow(0 5px 10px rgba(0,0,0,.16));} 
+.sigerec-brand-logo-fallback{background:linear-gradient(135deg,#22C55E,#2F80ED);color:#fff;font-size:1.45rem;}
+.sigerec-brand-logo-fallback i{line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.18));}
+
 .sigerec-brand-copy{display:flex;flex-direction:column;line-height:1.05;min-width:0;} 
 .sigerec-brand-copy strong{font-size:1.15rem;font-weight:950;letter-spacing:-.055em;} 
 .sigerec-brand-copy small{font-size:.74rem;font-weight:700;letter-spacing:.01em;color:rgba(255,255,255,.72);white-space:nowrap;} 
@@ -73,3 +76,8 @@
 .landing-final-cta{position:relative;overflow:hidden;border-radius:32px;padding:clamp(1.8rem,3.5vw,3rem);display:flex;justify-content:space-between;align-items:center;gap:1.2rem;color:#fff;background:linear-gradient(135deg,#123C32,#2F80ED);box-shadow:0 20px 58px rgba(18,60,50,.15);}.landing-final-cta:after{content:"";position:absolute;right:-5rem;top:-6rem;width:17rem;height:17rem;border-radius:50%;background:rgba(255,255,255,.12);}.landing-final-cta>*{position:relative;z-index:1}.landing-final-cta h2{font-weight:950;letter-spacing:-.06em;margin:.2rem 0 .35rem;}.landing-final-cta p{margin:0;color:rgba(255,255,255,.80);font-weight:650;}
 @media(max-width:991.98px){.landing-hero-grid{grid-template-columns:1fr}.landing-visual-card{min-height:360px}.process-line{grid-template-columns:repeat(2,1fr)}.landing-final-cta{align-items:flex-start;flex-direction:column}.landing-final-cta .btn{width:100%;}}
 @media(max-width:575.98px){.landing-hero-v2{border-radius:24px;padding:1.6rem}.landing-hero-copy h1{font-size:2.35rem}.landing-actions .btn{width:100%}.landing-visual-card{display:none}.process-line{grid-template-columns:1fr}.landing-section{border-radius:24px;padding:1.25rem}.metric-card-v2,.benefit-card-v2,.process-step{border-radius:20px}.landing-final-cta{border-radius:24px}}
+
+/* QA producción: evita que los iconos internos cubran el texto de los campos de acceso. */
+.input-wrap{position:relative;}
+.input-wrap i{z-index:2;pointer-events:none;}
+.input-wrap input{padding-left:52px!important;}
