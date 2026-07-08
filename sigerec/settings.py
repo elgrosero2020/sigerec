@@ -1,6 +1,6 @@
 """
 Configuración de Django para SIGEREC.
-Preparada para funcionar en desarrollo local y en producción en Render.
+Preparada para desarrollo local y producción en Render.
 """
 
 import os
@@ -8,7 +8,6 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Seguridad
 SECRET_KEY = os.environ.get(
     'SECRET_KEY',
     'django-insecure--c#e2wdb2+c@(m^ypom!o5ibh-75t@zzvns3b&34hea2s2ay*4'
@@ -28,7 +27,6 @@ CSRF_TRUSTED_ORIGINS = [
     if origin.strip()
 ]
 
-# Aplicaciones
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -71,9 +69,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sigerec.wsgi.application'
 
-# Base de datos
-# Para el alcance académico del proyecto se mantiene SQLite.
-# En una versión institucional se recomienda migrar a PostgreSQL.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -81,7 +76,6 @@ DATABASES = {
     }
 }
 
-# Validación de contraseñas
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -89,26 +83,22 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internacionalización
 LANGUAGE_CODE = 'es-bo'
 TIME_ZONE = 'America/La_Paz'
 USE_I18N = True
 USE_TZ = True
 
-# Archivos estáticos
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Archivos multimedia
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 
-# Ajustes de seguridad para producción
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
