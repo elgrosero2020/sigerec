@@ -3,6 +3,7 @@ from django.urls import path
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve as serve_media
 
 from vecinos.views import registro, login_view, logout_view
 
@@ -58,6 +59,15 @@ urlpatterns = [
         'reportes/exportar-pdf/',
         exportar_reportes_pdf,
         name='exportar_reportes_pdf'
+    ),
+
+    # Servicio de archivos multimedia subidos por usuarios.
+    # Necesario en Render porque DEBUG=False desactiva el servicio automático de MEDIA.
+    path(
+        'media/<path:path>',
+        serve_media,
+        {'document_root': settings.MEDIA_ROOT},
+        name='media'
     ),
 ]
 
